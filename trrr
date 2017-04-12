@@ -80,7 +80,7 @@ sub show {
     my( $key_color ) = ();
     my $i = 1;
     my $api = api($opt->{api});
-    my @filter = grep { int($_->{seeds}) > int($opt->{seeds}) } @{ $api->(\@keyword) };
+    my @filter = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $api->(\@keyword) };
     @filter = sort { $b->{seeds} <=> $a->{seeds} } @filter;
     my @f = splice(@filter,0,15);
 
