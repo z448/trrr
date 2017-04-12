@@ -8,7 +8,7 @@ App::Trrr - search torrents
 
 @ISA = qw(Exporter);
 @EXPORT = qw( open_app );
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use strict;
 
@@ -43,10 +43,6 @@ sub open_app {
 =head1 DESCRIPTION
     
 CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
-
-
-=for html
-<a href="https://raw.githubusercontent.com/z448/trrr/master/xt/trrr.gif"><img src="https://raw.githubusercontent.com/z448/trrr/master/xt/trrr.gif" alt="trrr" style="max-width:100%;"></a>
 
 =head1 USAGE
     

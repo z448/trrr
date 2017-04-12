@@ -4,15 +4,11 @@ trrr - search torrents
 
 # DESCRIPTION
 
-CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client.
-
-# GIF
-
-![trrr](https://raw.githubusercontent.com/z448/trrr/master/trrr.gif)
+CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
 
 # USAGE
 
-Search with as many parameters as needed. Uses KAT API by default, `-P` will switch to TPB.
+Search with as many parameters as needed. Uses KAT by default, `-P` will switch to TPB.
 
 > `trrr keyword1 keyword2 keywordN`
 >
@@ -38,7 +34,7 @@ To get another torrent from previous search add key as parameter. This is mandat
 
 \_
 
-See perldoc.
+See this perdoc.
 
 > `trrr -h`
 
@@ -53,4 +49,3 @@ App::Trr::HotKey is taken from StackOverflow post by brian d foy
 Copyright 2016 by Zdenek Bohunek
 
 This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
-
