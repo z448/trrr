@@ -1,0 +1,47 @@
+11.12.2016
+- changed torrent download path to ~/Downloads
+- table width optimize to terminal width
+- changed displayed size of torrents to Mb
+- perldoc
+
+12.12.2016
+- fixed table width
+- saving only if key is in range a-o
+- added Encode module, fix for Unicode characters ..'wide char in print...'
+
+13.12.2016
+- POSIX exports only ceil()
+- linux & ubuntu opens with nohup xdg-open
+- fixed seeds limits
+- added option -A -B -C to pick result from command line
+
+16.12.2016
+- POSIX termios_h loading with eval/require in case we're on MSWin32 or msys
+- say 'press key' after results are displayed
+- torrent file name based on title
+
+17.12.2016
+- fixed "illegal backslash escape sequence in string..." error
+- forgot to move version, moving to 0.05
+
+21.12.2016
+- remove \t from results
+
+28.12.2016
+- changed extratorrent for piratebay
+- no torrents are downloaded, instead magnet link is opened
+- added IO::Socket::SSL  and HTTP::Tinyish dependency, which should pick right https client (LWP, Tiny, curl or wget)
+- needs min. OpenSSL 1.0.1 library because of TLS v1.2
+
+29.12.2016
+- added kickass API used by default, thus no need for OpenSSL 1.0.1, thus works on iOS
+- piratebay API not used for now
+- removed HTTP::Tinyish dependency and added URI::Encode, trrr now uses 'curl' if exist else HTTP::Tiny
+- on iOS magnet link is placed into clipboard so it can be pasted into iTransmission 'Magnet' field
+- on iOS if trrr is started without any option/keyword it'll take content of clipboard and use it as keywords. For example if you select/copy some string in browser just launch 'trrr' in terminal
+
+19.2.2016
+- 'xclip', 'xsel' support for linux, Mac::PropertyList dependency for iOS
+- fixed error when trrr have no results when uppercase keywords are used
+
+
