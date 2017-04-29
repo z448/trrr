@@ -2,7 +2,7 @@ package App::Trrr::TPB;
 
 =head1 NAME
 
-App::Trrr::TPB - PirateBay API
+App::Trrr::TPB - Pirate API
 
 =cut
 
