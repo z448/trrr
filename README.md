@@ -2,10 +2,6 @@
 
 trrr - search torrents 
 
-# GIF
-
-![trrr](https://raw.githubusercontent.com/z448/trrr/master/trrr.gif)
-
 # DESCRIPTION
 
 CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
