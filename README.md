@@ -27,25 +27,17 @@ Search with as many parameters as needed. Uses KAT by default, `-P` will switch 
 >
 > `trrr keyword1 keyword2 keywordN -P`
 
-\_
-
 On Linux, start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed )
 
 > `trrr`
-
-\_
 
 Limit results which have at least 100 seeders.
 
 > `trrr keyword1 keyword2 keywordN -100`
 
-\_
-
 To get another torrent from previous search add key as parameter. This is mandatory on Windows running 'Git/Bash for Windows' where you have to specify key on CLI upfront.
 
 > `trrr keyword1 keyword2 keywordN -b`
-
-\_
 
 See this perdoc.
 
