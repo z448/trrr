@@ -6,6 +6,19 @@ trrr - search torrents
 
 CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
 
+# INSTALLATION
+
+`
+# switch to root
+# install dependency module URI::Encode
+cpan URI::Encode
+# install trrr
+git clone https://github.com/z448/trrr && cd trrr
+perl Makefile.PL
+make
+make install
+`
+
 # USAGE
 
 Search with as many parameters as needed. Uses KAT by default, `-P` will switch to TPB.
