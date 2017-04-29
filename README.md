@@ -8,7 +8,7 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 
 # INSTALLATION
 
-`
+```
 # switch to root
 # install dependency module URI::Encode
 cpan URI::Encode
@@ -17,7 +17,7 @@ git clone https://github.com/z448/trrr && cd trrr
 perl Makefile.PL
 make
 make install
-`
+```
 
 # USAGE
 
