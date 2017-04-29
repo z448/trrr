@@ -8,7 +8,8 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 
 # INSTALLATION
 
-> `switch to root`
+> `# switch to root`
+
 > `cpan App::Trrr`
 
 # USAGE
