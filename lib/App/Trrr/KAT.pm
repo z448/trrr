@@ -12,7 +12,6 @@ our $VERSION = '0.01';
 
 use warnings;
 use strict;
-use URI::Encode qw(uri_decode);
 use Carp;
 use HTTP::Tiny;
 
@@ -31,7 +30,8 @@ sub kat {
     my( @item, %t ) = ();
     open(my $fh,"<",\$response->{content}) || die "cant open response $!";
     while(<$fh>){
-        s/(.*\{ 'name': ')(.*?)(\'.*)(magnet\:.*?)('.*)/$2$4/ and $t{title} = uri_decode($2) and $t{magnet} = $4 if /data-sc-params="\{ 'name'\:/;
+        s/(.*\{ 'name': ')(.*?)(\'.*)(magnet\:.*?)('.*)/$2$4/ and $t{title} = $2 and $t{magnet} = $4 if /data-sc-params="\{ 'name'\:/;
+        $t{title} =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
         $t{size} = $_ and $t{size} =~ s/(<td class="nobr center">)(.*?)( <span>)(.)(.*)/$2$4/ if /<td class="nobr center">/;
         $t{category} = $_ and $t{category} =~ s/(.*?span id="cat_.*?href=".*?">)(.*?)(<\/a.*)/$2/ if /^Posted/;
         $t{seeds} = $_ and $t{seeds} =~ s/(<td class="green center">)(.*?)(\<.*)/$2/ if /<td class="green center">/;

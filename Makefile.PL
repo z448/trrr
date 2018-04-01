@@ -14,7 +14,6 @@ WriteMakefile(
         'POSIX'         =>  0,
         'Term::ANSIColor'    =>  0,
         'Encode'        => 0,
-        'URI::Encode'        =>0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'App::Trrr-*' },
