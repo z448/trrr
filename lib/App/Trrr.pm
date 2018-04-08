@@ -8,7 +8,7 @@ App::Trrr - search torrents
 
 @ISA = qw(Exporter);
 @EXPORT = qw( open_app );
-our $VERSION = '0.10';
+our $VERSION = '0.13';
 
 use strict;
 

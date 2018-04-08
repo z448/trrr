@@ -6,6 +6,7 @@ our $VERSION = '0.03';
 
 use warnings;
 use strict;
+use feature 'say';;
 
 sub os {
     open my $pipe,"-|",'uname -a';
@@ -29,18 +30,16 @@ sub tool {
 
 sub clip {
     my $tool = tool();
-    if( $tool =~/PropertyList/ ){ my $clip = ios_clip(); return sub{ $clip } }
-    my $clip = sub {
-            my $string = shift || undef;
-            unless( $string ){ 
-                $tool = "$tool -o" if $tool eq 'xclip';
-                chomp(my $read = `$tool`);
-                $read = lc $read;
-                return $read;
-            }
-            else { return system("echo $string | $tool") }
-    };
-    return $clip;
+    if( $tool =~/PropertyList/ ){
+        my $clip = ios_clip();
+        return $clip 
+    }
+    my $string = shift || undef;
+    unless( $string ){ 
+        $tool = "$tool -o" if $tool eq 'xclip';
+        chomp(my $clip = `$tool`);
+        return $clip;
+    } else { return system("echo $string | $tool") }
 };
 
 # On iOS the clipboard functionality needs Mac::PropertyList and 'pbpaste' utillity
@@ -58,15 +57,18 @@ sub ios_clip {
           1;
       };
 
-       unless($load){ return }
+       unless($load){ die "cant load MacPropertylist" }
        else {
            my $plist = Mac::PropertyList::parse_plist( $data );
            for(@{$plist}){
                my $s = $_->as_perl;
                unless($s eq 1){          
-                   if($s->{name} eq 'com.apple.UIKit.pboard.general'){
+                   if($s->{bundle} eq 'com.apple.UIKit.pboard'){
                        for(@{$s->{items}->{mobile}}){
-                           return $_->{'public.utf8-plain-text'};
+                          my %hash = %{$_};
+                          for my $h(keys %hash){
+                               return $hash{$h} if $h eq 'public.text';
+                           }
                        }
                    }
                }

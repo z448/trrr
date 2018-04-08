@@ -22,13 +22,7 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 my @keyword = ();
 
 unless(@ARGV){ 
-    my @clip = ();
-    my $clip = clip();
-    open(my $fh,'<',\$clip->()) || die "cant open string: $!";
-    my $line = <$fh>;
-    $line =~  s/^\s+//; $line =~ s/\s+$//; push @clip, $line; close $fh;
-    #pop @clip 
-    for(@clip){ push @keyword, $_ if /[a-z]/ }
+    push @keyword, split(" ", clip());
 }
 
 sub api {
