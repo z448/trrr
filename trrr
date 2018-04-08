@@ -21,10 +21,11 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
 
-unless(@ARGV){ 
+if($ARGV[0] eq undef  or $ARGV[0] eq '-P'){ 
+    print "---$ARGV[0]";
     push @keyword, split(" ", clip());
     for(@keyword){ s/\s*//g }
-    #print "$_" for @keyword;
+    print "$_" for @keyword;
 }
 
 sub api {
