@@ -22,6 +22,7 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 my @keyword = ();
 
 unless(@ARGV){ 
+    print "clipboard:" . clip();
     push @keyword, split(" ", clip());
 }
 

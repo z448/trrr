@@ -68,6 +68,7 @@ sub ios_clip {
                           my %hash = %{$_};
                           for my $h(keys %hash){
                                return $hash{$h} if $h eq 'public.text';
+                               return $hash{$h} if $h eq 'public.utf8-plain-text';
                            }
                        }
                    }
