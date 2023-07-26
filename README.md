@@ -8,17 +8,19 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 
 # INSTALLATION
 
-> `# switch to root`
-
-> `cpan App::Trrr`
+```bash
+git clone https://github.com/z448/trrr
+cd trrr
+perl Makefile.PL`
+make
+make install
+```
 
 # USAGE
 
-Search with as many parameters as needed. Uses KAT by default, `-P` will switch to TPB.
+Search with as many parameters as needed.
 
 > `trrr keyword1 keyword2 keywordN`
->
-> `trrr keyword1 keyword2 keywordN -P`
 
 On Linux, start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed )
 

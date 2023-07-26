@@ -16,6 +16,7 @@ use App::Trrr qw< open_app >;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
 use App::Trrr::Clipboard qw< clip >;
+use Data::Dumper;
 
 if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
@@ -36,10 +37,15 @@ sub api {
     return $api{$a};
 }
 
+#my $api = api('tpb');
+#my @query = ('amber', 'heard');
+#print Dumper( $api->(\@query) ); die;
+
 my $opt = {
     os      =>  "$^O",
     seeds   =>  1,
-    api     =>  "kat",
+    api     =>  "tpb",
+    #api     =>  "kat",
 };
 
 for(@ARGV){
@@ -76,7 +82,9 @@ sub show {
     my( $key_color ) = ();
     my $i = 1;
     my $api = api($opt->{api});
+
     my @filter = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $api->(\@keyword) };
+
     @filter = sort { $b->{seeds} <=> $a->{seeds} } @filter;
     my @f = splice(@filter,0,15);
 

@@ -23,6 +23,7 @@ my $check_xdg = sub {
 
 sub open_app {
     my $url = shift;
+    #$url =~ s/\ /\\ /g;
     my $os = {  osx     => 'open',
                 ios     => 'echo',
                 ubuntu  => 'xdg-open',
@@ -32,9 +33,9 @@ sub open_app {
     open my $pipe,"-|",'uname -a';
     while(<$pipe>){
         if(/iPhone/){ system("$os->{ios} '$url   ' | pbcopy") }
-        elsif(/Darwin/){ system("$os->{osx} $url") }
-        elsif(/Ubuntu/){ system("$os->{ubuntu} $url") }
-        elsif(/Linux/){ my $open = $check_xdg->($os->{linux}); system("$open $url") }
+        elsif(/Darwin/){ system("$os->{osx} '$url'") }
+        elsif(/Ubuntu/){ system("$os->{ubuntu} '$url'") }
+	elsif(/Linux/){ my $open = $check_xdg->($os->{linux}); system("$open '$url'") }
     }
 };
 
