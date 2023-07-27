@@ -71,7 +71,7 @@ sub tpb {
 	    603 => "Other > Pictures",
 	    604 => "Other > Covers",
 	    605 => "Other > Physibles",
-	    606 => "Other > Other"
+	    699 => "Other > Other"
     );
 
     
