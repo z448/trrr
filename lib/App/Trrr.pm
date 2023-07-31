@@ -7,8 +7,8 @@ App::Trrr - search torrents
 =cut
 
 @ISA = qw(Exporter);
-@EXPORT = qw( open_app );
-our $VERSION = '0.13';
+@EXPORT_OK = qw( open_app );
+our $VERSION = '0.14';
 
 use strict;
 
@@ -38,6 +38,7 @@ sub open_app {
 	elsif(/Linux/){ my $open = $check_xdg->($os->{linux}); system("$open '$url'") }
     }
 };
+
 
 1;
 

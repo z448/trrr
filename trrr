@@ -67,7 +67,7 @@ my $strip = sub {
 
     if( $term_width < length($line)){
         my $strip = length($line) - $term_width;
-        my $stripped_title = $term_width - $strip + 0;
+	my $stripped_title = $term_width - $strip + 0;
         $item->{title} = substr( $item->{title},0,$max);
     } 
     my $title = $item->{title};

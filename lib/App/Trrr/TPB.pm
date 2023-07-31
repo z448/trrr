@@ -14,7 +14,42 @@ use strict;
 use Carp;
 use HTTP::Tiny;
 use JSON::PP;
-use Data::Dumper;
+use List::Util qw(first);
+
+sub rnd_size {
+    my $bytes = shift;
+    
+    my $resize = sub {
+    	my $size = shift;
+        my @size = split(//, $size);
+
+	my $dotIdx = first { $size[$_] eq '.' } 0..$#size;
+	
+	if( $size[$dotIdx + 3] >= 5 ){
+		my $size = join('', @size[0..$dotIdx + 2]);
+		$size = $size + 0.01;
+		return $size;
+	} else {
+		splice @size, $dotIdx + 3;
+		my $size = join('', @size[0..$dotIdx + 2]);
+		return $size;
+	}
+    };
+
+    if( length $bytes > 9 ){ 
+	my $size = $resize->($bytes / 1024 / 1024 / 1024);
+	return $size . 'Gb';
+    } elsif( length $bytes > 6 ){
+	my $size = $resize->($bytes / 1024 / 1024);
+	return $size . 'Mb';
+    } elsif( length $bytes > 3 ){
+	my $size = $resize->($bytes / 1024);
+	return $size . 'kb';
+    } else {
+	    return $bytes . 'bytes';
+    }
+}
+
 
 sub tpb {
     my $keywords = shift;
@@ -78,7 +113,7 @@ sub tpb {
     for(@$content){
         $t{title} = $_->{name};
 	$t{magnet} = "magnet:?xt=urn:btih:" . $_->{info_hash} . "&dn=" . $t{title};
-	$t{size} = $_->{size};
+	$t{size} = rnd_size($_->{size});
 	$t{seeds} = $_->{seeders};
 	$t{leechs} = $_->{leechers};
 	$t{category} = $category{"$_->{category}"};
@@ -87,5 +122,7 @@ sub tpb {
     }
     return \@item;
 }
+
+
 
 1;
