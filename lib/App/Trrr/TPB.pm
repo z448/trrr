@@ -53,8 +53,8 @@ sub size {
 sub tpb {
     my $keywords = shift;
     my @domain = (
-	'pirateproxy.live', # 'https://' . 'pirateproxy.live' . '/search/' . join('%20', @$keywords) . '/1/99/0' 
 	'apibay.org', # 'https://' . 'apibay.org' . '/q.php?q=' . join('%20', @$keywords) . '&cat=0'
+	'pirateproxy.live', # 'https://' . 'pirateproxy.live' . '/search/' . join('%20', @$keywords) . '/1/99/0' 
 	'thepiratebay.zone',
 	'pirate-proxy.ink',
 	'www.pirateproxy-bay.com',
