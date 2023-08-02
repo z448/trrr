@@ -11,7 +11,7 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 ```bash
 git clone https://github.com/z448/trrr
 cd trrr
-perl Makefile.PL`
+perl Makefile.PL
 make
 make install
 ```
