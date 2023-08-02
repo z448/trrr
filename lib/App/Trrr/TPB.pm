@@ -16,10 +16,10 @@ use HTTP::Tiny;
 use JSON::PP;
 use List::Util qw(first);
 
-sub rnd_size {
+sub size {
     my $bytes = shift;
     
-    my $resize = sub {
+    my $round = sub {
     	my $size = shift;
         my @size = split(//, $size);
 
@@ -37,29 +37,55 @@ sub rnd_size {
     };
 
     if( length $bytes > 9 ){ 
-	my $size = $resize->($bytes / 1024 / 1024 / 1024);
+	my $size = $round->($bytes / 1024 / 1024 / 1024);
 	return $size . 'Gb';
     } elsif( length $bytes > 6 ){
-	my $size = $resize->($bytes / 1024 / 1024);
+	my $size = $round->($bytes / 1024 / 1024);
 	return $size . 'Mb';
     } elsif( length $bytes > 3 ){
-	my $size = $resize->($bytes / 1024);
+	my $size = $round->($bytes / 1024);
 	return $size . 'kb';
     } else {
 	    return $bytes . 'bytes';
     }
 }
 
-
 sub tpb {
     my $keywords = shift;
-    my $url = 'https://apibay.org/q.php?q=' . join('%20', @$keywords) . '&cat=0';
+    my @domain = (
+	'apibay.org', # 'https://' . 'apibay.org' . '/q.php?q=' . join('%20', @$keywords) . '&cat=0'
+	'pirateproxy.live', # 'https://' . 'pirateproxy.live' . '/search/' . join('%20', @$keywords) . '/1/99/0' 
+	'thepiratebay.zone',
+	'pirate-proxy.ink',
+	'www.pirateproxy-bay.com',
+	'www.tpbproxypirate.com',
+	'proxifiedpiratebay.org',
+	'ukpirate.co',
+	'mirrorbay.top',
+	'tpb.skynetcloud.site',
+	'tpb25.ukpass.co'
+    );
 
-    my $response = HTTP::Tiny->new->get( $url );
-    croak "Failed to get $url\n" unless $response->{success};
+    my $response = {};
+    for( @domain ){
+	    if(/^apibay\.org$/){
+		    $response = HTTP::Tiny->new->get( 'https://' . $_ . '/q.php?q=' . join('%20', @$keywords) . '&cat=0' );
+		    return apibay($response->{content}) if $response->{success};
+	    } else {
+		    $response = HTTP::Tiny->new->get( 'https://' . $_ . '/search/' . join('%20', @$keywords) . '/1/99/0' ) ;
+		    return mirror($response->{content}) if $response->{success};
+    	    }
+    }
+
+
+} 
+
+
+sub apibay {
+    my $content = shift;
      
     my $json = JSON::PP->new->ascii->pretty->allow_nonref;
-    my $content = $json->decode($response->{content});
+    $content = $json->decode($content);
 
     my( @item, %t ) = ();
     my %category = (
@@ -77,6 +103,7 @@ sub tpb {
 	    207 => "Video > HD Movies",
 	    208	=> "Video > HD TV-Shows",
 	    209 => "Video > 3D",
+	    211 => "Video > UHD/4k Movies",
 	    299 => "Video > Other",
 	    301 => "Applications > Windows",
 	    302 => "Applications > Mac/Apple",
@@ -113,7 +140,7 @@ sub tpb {
     for(@$content){
         $t{title} = $_->{name};
 	$t{magnet} = "magnet:?xt=urn:btih:" . $_->{info_hash} . "&dn=" . $t{title};
-	$t{size} = rnd_size($_->{size});
+	$t{size} = size($_->{size});
 	$t{seeds} = $_->{seeders};
 	$t{leechs} = $_->{leechers};
 	$t{category} = $category{"$_->{category}"};
@@ -123,6 +150,35 @@ sub tpb {
     return \@item;
 }
 
+
+sub mirror {
+    my $content = shift;
+
+    my $category = 0;
+    my( @item, %t, $leechs, ) = ();
+    open(my $fh,"<",\$content) || die "cant open \$content: $!";
+    while(<$fh>){
+            $t{title} = $_ and $t{title} =~ s/(.*?title\=\"Details for )(.*?)(\".*)/$2/ if /detName/;
+            $t{magnet} = $_ and $t{magnet} =~ s/(\<a href\=\")(magnet.*?)(\".*)/$2/  if /\<a href\=\"magnet/;
+            $t{size} = $_ and $t{size} =~ s/(.*?)(Size.*?\ )(.*?)(\&nbsp\;)(.)(.*)/$3$5/ if /Size.*?\ /;
+
+	if(/<td align="right">/){  
+	    unless($leechs){
+	        $t{seeds} = $_; $t{seeds} =~ s/(.*?<td align="right">)([0-9]+)(<.*)/$2/; $leechs = 1;
+	    } else { $t{leechs} = $_; $t{leechs} =~ s/(.*?<td align="right">)([0-9]+)(<.*)/$2/; $leechs = 0 }
+	}
+        if(/More from this category/){
+            if($category == 0){
+                $t{category} = $_ and $t{category} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
+                chomp($t{magnet}, $t{title}, $t{size}, $t{category}, $t{seeds}, $t{leechs});
+                push @item, {%t};
+                $category = 1;
+            } else { $category = 0 }
+        }
+    }
+    close $fh;
+    return \@item;
+}
 
 
 1;
