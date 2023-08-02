@@ -53,8 +53,8 @@ sub size {
 sub tpb {
     my $keywords = shift;
     my @domain = (
-	'apibay.org', # 'https://' . 'apibay.org' . '/q.php?q=' . join('%20', @$keywords) . '&cat=0'
 	'pirateproxy.live', # 'https://' . 'pirateproxy.live' . '/search/' . join('%20', @$keywords) . '/1/99/0' 
+	'apibay.org', # 'https://' . 'apibay.org' . '/q.php?q=' . join('%20', @$keywords) . '&cat=0'
 	'thepiratebay.zone',
 	'pirate-proxy.ink',
 	'www.pirateproxy-bay.com',
@@ -160,7 +160,7 @@ sub mirror {
     while(<$fh>){
             $t{title} = $_ and $t{title} =~ s/(.*?title\=\"Details for )(.*?)(\".*)/$2/ if /detName/;
             $t{magnet} = $_ and $t{magnet} =~ s/(\<a href\=\")(magnet.*?)(\".*)/$2/  if /\<a href\=\"magnet/;
-            $t{size} = $_ and $t{size} =~ s/(.*?)(Size.*?\ )(.*?)(\&nbsp\;)(.)(.*)/$3$5/ if /Size.*?\ /;
+            $t{size} = $_ and $t{size} =~ s/(.*?)(Size.*?\ )(.*?)(\&nbsp\;)(.)i(.)(.*)/$3$5b/ if /Size.*?\ /;
 
 	if(/<td align="right">/){  
 	    unless($leechs){
@@ -169,11 +169,20 @@ sub mirror {
 	}
         if(/More from this category/){
             if($category == 0){
-                $t{category} = $_ and $t{category} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
-                chomp($t{magnet}, $t{title}, $t{size}, $t{category}, $t{seeds}, $t{leechs});
+                $t{cate} = $_ and $t{cate} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
+		#$t{category} = $_ and $t{category} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
+                chomp($t{magnet}, $t{title}, $t{size}, $t{cate}, $t{seeds}, $t{leechs});
+		#chomp($t{magnet}, $t{title}, $t{size}, $t{category}, $t{seeds}, $t{leechs});
                 push @item, {%t};
                 $category = 1;
-            } else { $category = 0 }
+	    #} else { $category = 0 }
+            } else {  # <-----from here
+                    $t{gory} = $_ and $t{gory} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
+		    chomp($t{gory});
+		    #$t{category} = $_ and $t{category} =~ s/(.*category\"\>)(.*?)(\<.*)/$2/;
+		    $t{category} = $t{cate} . ' > ' . $t{gory}; 
+		    $category = 0;
+	    } # <----- to here
         }
     }
     close $fh;
