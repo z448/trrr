@@ -126,7 +126,7 @@ sub get_torrent {
     if( $picked->{api} eq 'rarbg' ){
     open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;;
     exit;
-	    # make request to $picked->{title} $picked->{link} and scrap its magnet link; so far you dont have $picked->{domain} and $picked->{link}
+	    #make request to $picked->{title} $picked->{link} and scrap its magnet link; so far you dont have $picked->{domain} and $picked->{link}
     }
     open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
 }
