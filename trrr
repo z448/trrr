@@ -15,6 +15,7 @@ use Term::ANSIColor;
 use App::Trrr qw< open_app >;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
+use App::Trrr::RBG qw< rbg >;
 use App::Trrr::Clipboard qw< clip >;
 use Data::Dumper;
 
@@ -22,7 +23,7 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
 
-if($ARGV[0] eq undef  or $ARGV[0] eq '-P'){ 
+if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R'){ 
     push @keyword, split(" ", clip());
     for(@keyword){ s/\s*//g }
     #print "$_" for @keyword;
@@ -33,6 +34,7 @@ sub api {
     my %api = (
         tpb =>  sub { tpb(@_) },
         kat =>  sub { kat(@_) },
+        rbg =>  sub { rbg(@_) },
     );
     return $api{$a};
 }
@@ -45,6 +47,7 @@ my $opt = {
     os      =>  "$^O",
     seeds   =>  1,
     api     =>  "tpb",
+    api     =>  "rbg",
     #api     =>  "kat",
 };
 
@@ -54,6 +57,7 @@ for(@ARGV){
         if(/[a-z]/){ $opt->{key} = lc $_ }
         if(/[0-9]+/){ $opt->{seeds} = int $_ } 
         if(/[P]/){ $opt->{api} = "tpb" }
+        if(/[R]/){ $opt->{api} = "rbg" }
     } else { my $keyword = lc $_; push @keyword, $keyword }
 }
 
@@ -119,6 +123,11 @@ sub key {
 sub get_torrent {
     my $filter = shift;
     my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$filter;
+    if( $picked->{api} eq 'rarbg' ){
+    open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;;
+    exit;
+	    # make request to $picked->{title} $picked->{link} and scrap its magnet link; so far you dont have $picked->{domain} and $picked->{link}
+    }
     open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
 }
 
