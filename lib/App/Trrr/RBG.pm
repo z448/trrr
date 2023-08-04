@@ -27,11 +27,13 @@ sub rbg {
     my @domain = (
 	    'rargb.to',
 	    'www.rarbgproxy.to', # rarbgproxy.to
-	    'www2.rarbggo.to' # rarbggo.to
+	    'www2.rarbggo.to', # rarbggo.to
+	    'rarbg.unblockninja.com'
     );
 
     for( @domain ){
-	my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords);
+        my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords) . '&order=seeders&by=DESC';
+	#my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords);
 	my $response = HTTP::Tiny->new->get($url);
 	croak "Failed to get $url\n" unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
