@@ -139,13 +139,17 @@ sub apibay {
     
     for(@$content){
         $t{title} = $_->{name};
-	$t{magnet} = "magnet:?xt=urn:btih:" . $_->{info_hash} . "&dn=" . $t{title};
-	$t{size} = size($_->{size});
-	$t{seeds} = $_->{seeders};
-	$t{leechs} = $_->{leechers};
-	$t{category} = $category{"$_->{category}"};
+	    
+        $t{magnet} = "magnet:?xt=urn:btih:" . $_->{info_hash} . "&dn=" . $t{title};
+        $t{magnet} =~ s/ /%20/g;
+        $t{magnet} =~ s/"/%22/g;
+	    
+        $t{size} = size($_->{size});
+	    $t{seeds} = $_->{seeders};
+	    $t{leechs} = $_->{leechers};
+	    $t{category} = $category{"$_->{category}"};
 	
-	push @item, {%t};
+	    push @item, {%t};
     }
     return \@item;
 }
@@ -159,7 +163,11 @@ sub mirror {
     open(my $fh,"<",\$content) || die "cant open \$content: $!";
     while(<$fh>){
             $t{title} = $_ and $t{title} =~ s/(.*?title\=\"Details for )(.*?)(\".*)/$2/ if /detName/;
+            
             $t{magnet} = $_ and $t{magnet} =~ s/(\<a href\=\")(magnet.*?)(\".*)/$2/  if /\<a href\=\"magnet/;
+            $t{magnet} =~ s/ /%20/g;
+            $t{magnet} =~ s/"/%22/g;
+            
             $t{size} = $_ and $t{size} =~ s/(.*?)(Size.*?\ )(.*?)(\&nbsp\;)(.)i(.)(.*)/$3$5b/ if /Size.*?\ /;
 
 	if(/<td align="right">/){  

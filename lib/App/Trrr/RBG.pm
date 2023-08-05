@@ -95,6 +95,8 @@ sub magnet {
     while(<$fh>){
 	if(/href="(magnet.+)"/){
 	    my $magnet = $1;
+        $magnet =~ s/ /%20/g;
+        $magnet =~ s/"/%22/g;
 	    return $magnet;
 	}
     }
