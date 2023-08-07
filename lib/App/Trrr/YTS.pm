@@ -15,7 +15,6 @@ use warnings;
 use Carp;
 use HTTP::Tiny;
 use JSON::PP;
-use Data::Dumper;
 
 
 sub yts {
@@ -35,7 +34,6 @@ sub yts {
     my $response = {};
     for( @domain ){
 	    my $url = 'https://' . $_ . '/ajax/search?query=' . join('%20', @$keywords);
-	# https://yts.pm/ajax/search?query=happy%20end
 	$response = HTTP::Tiny->new->get($url);
 	croak "Failed to get $url\n" unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
@@ -77,17 +75,10 @@ sub magnet {
 	if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1 }
     }
     #return \%magnet;
-    return $magnet{'1080p'};
+    return $magnet{'2160p'} if exists $magnet{'2160p'};
+    return $magnet{'1080p'} if exists $magnet{'1080p'};
+    return $magnet{'720p'} if exists $magnet{'720p'};
 }
 
-
-#my @query = qw( pulp fiction );
-#my @query = ( 'https://yts.mx/movies/pulp-fiction-1994' );
-
-#print yts(\@query);
-#print Dumper( yts(\@query) );
-
-#my $query = 'https://yts.mx/movies/pulp-fiction-1994';
-#print Dumper( yts($query) );
 
 1;
