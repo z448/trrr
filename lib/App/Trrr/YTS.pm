@@ -56,7 +56,8 @@ sub results {
 	$t{link} = $_->{url};
         $t{title} = $_->{title};
 	$t{category} = 'Movies';
-	$t{size} = '';
+	$t{year} = $_->{year};
+	$t{size} = '?';
 	$t{seeds} = 1;
 	$t{leechs} = '?';
 	$t{uploader} = '?';
@@ -68,19 +69,25 @@ sub results {
 sub magnet {
     my $content = shift;    
     
+    my %magnet = ();
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-	if(/href="(magnet.+)"/){
-	    my $magnet = $1;
-            $magnet =~ s/ /%20/g;
-            $magnet =~ s/"/%22/g;
-	    return $magnet;
-	}
+	if(/href="(magnet.+?720p.+?)"/){ $magnet{'720p'} = $1 }
+	if(/href="(magnet.+?1080p.+?)"/){ $magnet{'1080p'} = $1 }
+	if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1 }
     }
+    #return \%magnet;
+    return $magnet{'1080p'};
 }
 
 
 #my @query = qw( pulp fiction );
+#my @query = ( 'https://yts.mx/movies/pulp-fiction-1994' );
+
+#print yts(\@query);
 #print Dumper( yts(\@query) );
+
+#my $query = 'https://yts.mx/movies/pulp-fiction-1994';
+#print Dumper( yts($query) );
 
 1;

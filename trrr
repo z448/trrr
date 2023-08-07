@@ -99,8 +99,9 @@ sub show {
 
         $_->{key} = $key;
         my $title = $strip->($_,'title');
-	$_->{seeds} = '' if($_->{api} eq 'yts');
-        say colored([$key_color],$key) . ' ' . colored(['cyan'],$_->{seeds}) . ' ' .  colored(['yellow'],$title) . ' ' . colored(['grey8'],$_->{category}) . ' ' . colored(['bold'],$_->{size}) if defined $_->{key};
+	#$_->{seeds} = '' if($_->{api} eq 'yts');
+        if($_->{api} eq 'yts'){ say colored([$key_color],$key) . ' ' .  colored(['yellow'],$title) . ' ' . colored(['yellow'], "($_->{year})") . ' ' . colored(['grey8'],$_->{category}) if defined $_->{key} } else {
+        say colored([$key_color],$key) . ' ' . colored(['cyan'],$_->{seeds}) . ' ' .  colored(['yellow'],$title) . ' ' . colored(['grey8'],$_->{category}) . ' ' . colored(['bold'],$_->{size}) if defined $_->{key} }
         $key++; $i++;
     }
     key(\@f);
