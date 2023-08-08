@@ -11,6 +11,7 @@ App::Trrr::TPB - TPB API
 our $VERSION = '0.01';
 
 use strict;
+use warnings;
 use Carp;
 use HTTP::Tiny;
 use JSON::PP;
@@ -171,6 +172,7 @@ sub mirror {
             $t{size} = $_ and $t{size} =~ s/(.*?)(Size.*?\ )(.*?)(\&nbsp\;)(.)i(.)(.*)/$3$5b/ if /Size.*?\ /;
 
 	if(/<td align="right">/){  
+	    $t{api} = 'tpb';	
 	    unless($leechs){
 	        $t{seeds} = $_; $t{seeds} =~ s/(.*?<td align="right">)([0-9]+)(<.*)/$2/; $leechs = 1;
 	    } else { $t{leechs} = $_; $t{leechs} =~ s/(.*?<td align="right">)([0-9]+)(<.*)/$2/; $leechs = 0 }

@@ -2,7 +2,7 @@ package App::Trrr::KAT;
 
 =head1 NAME
 
-App::Trrr::KAT - KickAss API
+App::Trrr::KAT
 
 =cut
 
@@ -10,56 +10,119 @@ App::Trrr::KAT - KickAss API
 @EXPORT_OK = qw( kat );
 our $VERSION = '0.01';
 
-use warnings;
 use strict;
+use warnings;
 use Carp;
 use HTTP::Tiny;
+use Data::Dumper;
 
 sub kat {
     my $keywords = shift;
-    my $url = 'http://kickasstorrents.to/usearch/' . join('%20', @$keywords) . '/';
-
-    my $response;
-    if(`which curl`){ 
-        $response->{content} = `curl -skL '$url'`;
-    } else {
-        $response = HTTP::Tiny->new->get( $url );
-        croak "Failed to get $url\n" unless $response->{success};
+    if( $keywords =~ /\.html$/ ){
+        # it's comming from get_torrent() and you need to return magnet link
+        my $response = HTTP::Tiny->new->get($keywords);
+        croak "Failed to get $keywords\n" unless $response->{success};
+        return magnet($response->{content}) if $response->{success};
     }
-     
+
+    my @domain = (
+	'katcr.to',
+	'kickasstorrents.to',
+	'kickasstorrent.cr',
+	'thekat.info',
+	'kick4ss.com',
+	'kat.am',
+	'kat.rip'
+    );
+
+    for( @domain ){
+	    #if(/katcr\.to/ || /kickasstorrents\.to/ || /kickasstorrent\.cr/ || /kat\.am/){ ... }
+	my $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?sortby=seeders&sort=desc';
+	my $response = HTTP::Tiny->new->get($url);
+	croak "Failed to get $url\n" unless $response->{success};
+	return results($response->{content}, $_) if $response->{success};
+    }
+}
+
+
+sub results {
+    my( $content, $domain ) = @_;
+
+    my $in_table = 0;
+    my $in_seeds = 0;
+    my $in_leechs= 0;
     my( @item, %t ) = ();
-    open(my $fh,"<",\$response->{content}) || die "cant open response $!";
+    open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-        if(/data-sc-params="\{ 'name'\:/){
-            s/(.*\{ 'name': ')(.*?)(\'.*)(magnet\:.*?)('.*)/$2$4/;
-            $t{title} = $2;
-            $t{magnet} = $4;
-            $t{title} =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-        };
+	$in_table = 1 if /table.+data frontPageWidget/;
+	$in_table = 0 if /<\/table>/;
 
-        if(/<td class="nobr center">/){
-            $t{size} = $_;
-            $t{size} =~ s/(<td class="nobr center">)(.*?)( <span>)(.)(.*)/$2$4/;
+	if(/<a href="(\/.+?)".+filmType">/ and $in_table){
+	    $t{api} = 'kat';
+	    $t{domain} = $domain;
+	    $t{link} = $1; $t{link} = 'https://' . $domain . $t{link};
+    	} 
+
+	if(/<strong class="red">(.+) <\/a>$/ and $in_table){
+	    $t{title} = $1; 
+	    $t{title} =~ s/<strong class="red">//g;
+	    $t{title} =~ s/<\/strong>//g;
+	    $t{title} =~ s/<\/a>//g;
+	}
+
+	if(/href="\/user\/(.+)\/">$/ and $in_table){
+	    $t{uploader} = $1;
         }
 
-        if(/^Posted/){
-            $t{category} = $_;
-            $t{category} =~ s/(.*?span id="cat_.*?href=".*?">)(.*?)(<\/a.*)/$2/;
-        }
-        
-        if(/<td class="green center">/){
-            $t{seeds} = $_;
-            $t{seeds} =~ s/(<td class="green center">)(.*?)(\<.*)/$2/;
-        }
+	if(/^<a href="\/(.+?)\/(.+?)\/">$/ and $in_table){
+	    $t{category} = $1 . ' > ' . $2;
+	}
 
-        if(/<td class="red lasttd center">/){
-            $t{leechs} = $_;
-            $t{leechs} =~ s/(<td class="red lasttd center">)(.*?)(\<.*)/$2/;
-            chomp($t{magnet}, $t{title}, $t{size}, $t{category}, $t{seeds}, $t{leechs});
+	if(/^(\d.+?B) <\/td>$/){
+	    $t{size} = $1; $t{size} =~ s/B/b/;
+	}
+
+	if(/^<td class="center" title="(\d+?)<br\/>(day.*|week.*|month.*|year.*)">$/){   
+	    $t{added} = $1 . ' ' . $2;
+	}
+	
+	if(/^<td class="green center">$/ and $in_table){ $in_seeds = 1}
+	if(/^(\d+?) <\/td>$/ and $in_seeds){
+	    $t{seeds} = $1;
+	    $in_seeds = 0;
+	}
+
+	if(/^<td class="red lasttd center">$/ and $in_table){ $in_leechs = 1 }
+	if(/^(\d+?) <\/td>$/ and $in_leechs){
+	    $t{leechs} = $1;
+	    $in_leechs = 0;
             push @item, {%t};
-        }
+
+    	}
     }
+    close $fh;
     return \@item;
 }
+
+
+sub magnet {
+    my $content = shift;
+    
+    open(my $fh,'<', \$content) || die "cant open \$content: $!";
+    while(<$fh>){
+	if(/Magnet link" href="(magnet:.+?)"><i /){
+	    my $magnet = $1;
+	    #$magnet =~ s/ /%20/g;
+	    #$magnet =~ s/"/%22/g;
+	    return $magnet;
+	}
+    }
+}
+
+
+#my @query = ('pulp', 'fiction' ); 
+#print Dumper( kat( \@query ) );
+#print kat( 'https://katcr.to/the-lincoln-lawyer-s02-part1-720p-nf-webrip-x264-galaxytv-t5715923.html');
+
 
 1;
