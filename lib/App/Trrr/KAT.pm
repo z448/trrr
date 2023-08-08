@@ -41,7 +41,7 @@ sub kat {
 	if(/katcr\.to/ || /kickasstorrents\.to/ || /kickasstorrent\.cr/ || /kat\.am/){
 	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?sortby=seeders&sort=desc';
 	} else {
-	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '?field=seeders&sorder=desc';
+	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?field=seeders&sorder=desc';
         }
 
 =head1
@@ -176,7 +176,7 @@ sub magnet {
     
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-	if(/Magnet link" href="(magnet:.+?)"><i /){
+	if(/href="(magnet:.+?)"/){
 	    my $magnet = $1;
 	    #$magnet =~ s/ /%20/g;
 	    #$magnet =~ s/"/%22/g;
