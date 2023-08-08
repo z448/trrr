@@ -27,11 +27,11 @@ sub kat {
     }
 
     my @domain = (
-	'thekat.info', # tmp <-- put it back at [4]th place
 	'katcr.to',
 	'kickasstorrents.to',
 	'kickasstorrent.cr',
 	'kat.am',
+	'thekat.info', # tmp <-- put it back at [4]th place
 	'kick4ss.com',
 	'kat.rip'
     );
@@ -185,9 +185,5 @@ sub magnet {
     }
 }
 
-
-my @query = ('pulp', 'fiction' ); 
-print Dumper( kat( \@query ) );
-#print kat( 'https://katcr.to/the-lincoln-lawyer-s02-part1-720p-nf-webrip-x264-galaxytv-t5715923.html');
 
 1;

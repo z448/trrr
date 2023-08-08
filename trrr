@@ -138,7 +138,6 @@ sub get_torrent {
 	    if(exists $picked->{magnet}){
    	        open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/; 
     	    } elsif(exists $picked->{link}){
-		    print "\$picked->{links} exists\n";
 	        open_app( kat($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
 	    }
     } else { open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/ }
