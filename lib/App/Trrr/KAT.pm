@@ -27,13 +27,13 @@ sub kat {
     }
 
     my @domain = (
-	'katcr.to',
-	'kickasstorrents.to',
-	'kickasstorrent.cr',
-	'kat.am',
-	'thekat.info', # tmp <-- put it back at [4]th place
-	'kick4ss.com',
-	'kat.rip'
+	'zkatcr.to',
+	'zkickasstorrents.to',
+	'zkickasstorrent.cr',
+	'zkat.am',
+	'zthekat.info', # tmp <-- put it back at [4]th place
+	'zkick4ss.com',
+	'kat.rip',
     );
 
     my $url;
@@ -44,13 +44,9 @@ sub kat {
 	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?field=seeders&sorder=desc';
         }
 
-=head1
-	my $response = `cat /tmp/https__thekat.info_usearch_pulp+fiction.html`; # tmp <----- replace with head1/cut bellow
-	return results($response, $_); # tmp <----- replace with head1/cut bellow
-=cut
-
 	my $response = HTTP::Tiny->new->get($url);
-	croak "Failed to get $url\n" unless $response->{success};
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
     }
 }
