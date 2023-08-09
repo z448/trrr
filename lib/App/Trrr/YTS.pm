@@ -33,9 +33,12 @@ sub yts {
 
     my $response = {};
     for( @domain ){
-	    my $url = 'https://' . $_ . '/ajax/search?query=' . join('%20', @$keywords);
+	my $url = 'https://' . $_ . '/ajax/search?query=' . join('%20', @$keywords);
 	$response = HTTP::Tiny->new->get($url);
-	croak "Failed to get $url\n" unless $response->{success};
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+	
+	next unless $response->{success};
+
 	return results($response->{content}, $_) if $response->{success};
     }
 }

@@ -33,9 +33,9 @@ sub rbg {
 
     for( @domain ){
         my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords) . '&order=seeders&by=DESC';
-	#my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords);
 	my $response = HTTP::Tiny->new->get($url);
-	croak "Failed to get $url\n" unless $response->{success};
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
     }
 }

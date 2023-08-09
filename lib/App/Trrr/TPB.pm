@@ -68,12 +68,20 @@ sub tpb {
     );
 
     my $response = {};
+    my $url;
     for( @domain ){
 	    if(/^apibay\.org$/){
-		    $response = HTTP::Tiny->new->get( 'https://' . $_ . '/q.php?q=' . join('%20', @$keywords) . '&cat=0' );
+		    $url = 'https://' . $_ . '/q.php?q=' . join('%20', @$keywords) . '&cat=0';
+		    $response = HTTP::Tiny->new->get($url);
+		    next unless $response->{success};
 		    return apibay($response->{content}) if $response->{success};
 	    } else {
-		    $response = HTTP::Tiny->new->get( 'https://' . $_ . '/search/' . join('%20', @$keywords) . '/1/99/0' ) ;
+		    $url = 'https://' . $_ . '/search/' . join('%20', @$keywords) . '/1/99/0';
+		    $response = HTTP::Tiny->new->get($url) ;
+		    if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+		    
+		    next unless $response->{success};
+
 		    return mirror($response->{content}) if $response->{success};
     	    }
     }
