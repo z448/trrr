@@ -17,6 +17,7 @@ use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
 use App::Trrr::RBG qw< rbg >;
 use App::Trrr::YTS qw< yts >;
+use App::Trrr::EXT qw< ext >;
 use App::Trrr::Clipboard qw< clip >;
 use Data::Dumper;
 
@@ -24,7 +25,7 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
 
-if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R' or $ARGV[0] eq '-Y' or $ARGV[0] eq '-K'){ 
+if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R' or $ARGV[0] eq '-Y' or $ARGV[0] eq '-K' or $ARGV[0] eq '-E'){ 
     push @keyword, split(" ", clip());
     for(@keyword){ s/\s*//g }
     #print "$_" for @keyword;
@@ -37,6 +38,7 @@ sub api {
         kat =>  sub { kat(@_) },
         rbg =>  sub { rbg(@_) },
         yts =>  sub { yts(@_) },
+        ext =>  sub { ext(@_) },
     );
     return $api{$a};
 }
@@ -60,6 +62,7 @@ for(@ARGV){
         if(/[R]/){ $opt->{api} = "rbg" }
         if(/[Y]/){ $opt->{api} = "yts" }
         if(/[K]/){ $opt->{api} = "kat" }
+        if(/[E]/){ $opt->{api} = "ext" }
     } else { my $keyword = lc $_; push @keyword, $keyword }
 }
 
