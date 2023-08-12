@@ -18,6 +18,7 @@ use App::Trrr::TPB qw< tpb >;
 use App::Trrr::RBG qw< rbg >;
 use App::Trrr::YTS qw< yts >;
 use App::Trrr::EXT qw< ext >;
+use App::Trrr::X137 qw< x137 >;
 use App::Trrr::Clipboard qw< clip >;
 use Data::Dumper;
 
@@ -25,7 +26,7 @@ if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
 
-if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R' or $ARGV[0] eq '-Y' or $ARGV[0] eq '-K' or $ARGV[0] eq '-E'){ 
+if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R' or $ARGV[0] eq '-Y' or $ARGV[0] eq '-K' or $ARGV[0] eq '-E' or $ARGV[0] eq '-X'){ 
     push @keyword, split(" ", clip());
     for(@keyword){ s/\s*//g }
     #print "$_" for @keyword;
@@ -39,13 +40,10 @@ sub api {
         rbg =>  sub { rbg(@_) },
         yts =>  sub { yts(@_) },
         ext =>  sub { ext(@_) },
+        x137 =>  sub { x137(@_) },
     );
     return $api{$a};
 }
-
-#my $api = api('tpb');
-#my @query = ('amber', 'heard');
-#print Dumper( $api->(\@query) ); die;
 
 my $opt = {
     os      =>  "$^O",
@@ -63,6 +61,7 @@ for(@ARGV){
         if(/[Y]/){ $opt->{api} = "yts" }
         if(/[K]/){ $opt->{api} = "kat" }
         if(/[E]/){ $opt->{api} = "ext" }
+        if(/[X]/){ $opt->{api} = "x137" }
     } else { my $keyword = lc $_; push @keyword, $keyword }
 }
 
@@ -131,6 +130,13 @@ sub get_torrent {
     my $filter = shift;
     my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$filter;
 
+    if( $picked->{magnet} ){
+   	    open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/; 
+    } else { 
+	    no strict "refs";
+            open_app( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/ }
+
+=head1
     if( $picked->{api} eq 'rarbg' ){
     	open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
 	#exit;
@@ -144,6 +150,7 @@ sub get_torrent {
 	    open_app( kat($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
 	}
     } else { open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/ }
+=cut
 }
 
 show();
