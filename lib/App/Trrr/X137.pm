@@ -12,6 +12,7 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
+use v5.10;
 use HTTP::Tiny;
 use Time::HiRes qw(gettimeofday);
 use Data::Dumper;
@@ -52,54 +53,138 @@ sub results {
 
     my( @item, %t ) = ();
     my %in = ( table => 0 );
-    $t{api} = 'x137';
-    $t{domain} = $domain;
-    $t{category} = '?';
+    my %category = (
+	'/sub/1/0/'	=>	'Video > Erotic',
+	'/sub/2/0/'	=>	'Video > Movie',
+	'/sub/3/0/'	=>	'Video > Misc',
+	'/sub/4/0/'	=>	'Video > Dubs/Dual Audio',
+	'/sub/5/0/'	=>	'?',
+	'/sub/6/0/'	=>	'Video > TV Series',
+	'/sub/7/0/'	=>	'Video > Misc',
+	'/sub/8/0/'	=>	'?',
+	'/sub/9/0/'	=>	'Video > Documentary',
+	'/sub/10/0/'	=>	'Games > PC',
+	'/sub/11/0/'	=>	'Games > PS2',
+	'/sub/12/0/'	=>	'Games > PSP',
+	'/sub/13/0/'	=>	'Games > Xbox',
+	'/sub/14/0/'	=>	'Games > Xbox360',
+	'/sub/15/0/'	=>	'Games > PS1',
+	'/sub/16/0/'	=>	'Games > Dreamcast',
+	'/sub/17/0/'	=>	'Games > Misc',
+	'/sub/18/0/'	=>	'Software > PC',
+	'/sub/19/0/'	=>	'Software > Mac',
+	'/sub/20/0/'	=>	'Software > Linux',
+	'/sub/21/0/'	=>	'Software > Misc',
+	'/sub/22/0/'	=>	'Music > MP3',
+	'/sub/23/0/'	=>	'Music > Lossless',
+	'/sub/24/0/'	=>	'Music > DVD',
+	'/sub/25/0/'	=>	'Music > Video',
+	'/sub/26/0/'	=>	'Music > Radio',
+	'/sub/27/0/'	=>	'Music > Misc',
+	'/sub/28/0/'	=>	'Video > Anime',
+	'/sub/29/0/'	=>	'?',
+	'/sub/30/0/'	=>	'?',
+	'/sub/31/0/'	=>	'?',
+	'/sub/32/0/'	=>	'?',
+	'/sub/33/0/'	=>	'Emulation',
+	'/sub/34/0/'	=>	'Tutorials',
+	'/sub/35/0/'	=>	'Sounds',
+	'/sub/36/0/'	=>	'E-Books',
+	'/sub/37/0/'	=>	'Images',
+	'/sub/38/0/'	=>	'Mobile',
+	'/sub/39/0/'	=>	'Comics',
+	'/sub/40/0/'	=>	'Other',
+	'/sub/41/0/'	=>	'HD',
+	'/sub/42/0/'	=>	'HD',
+	'/sub/43/0/'	=>	'Games > PS3',
+	'/sub/44/0/'	=>	'Games > Wii',
+	'/sub/45/0/'	=>	'Games > DS',
+	'/sub/46/0/'	=>	'Games > GameCube',
+	'/sub/47/0/'	=>	'Software > Theme/Plugin',
+	'/sub/48/0/'	=>	'Video > Porn',
+	'/sub/49/0/'	=>	'Picture > Nude',
+	'/sub/50/0/'	=>	'Magazine > Erotic',
+	'/sub/51/0/'	=>	'Hentai',
+	'/sub/52/0/'	=>	'Audiobook',
+	'/sub/53/0/'	=>	'Music > MP3',
+	'/sub/54/0/'	=>	'Video > Movie',
+	'/sub/55/0/'	=>	'Video > MP4',
+	'/sub/56/0/'	=>	'Software > Android',
+	'/sub/57/0/'	=>	'Software > iOS',
+	'/sub/58/0/'	=>	'Music > Box Set',
+	'/sub/59/0/'	=>	'Music > Discography',
+	'/sub/60/0/'	=>	'Music > Single',
+	'/sub/61/0/'	=>	'?',
+	'/sub/62/0/'	=>	'?',
+	'/sub/63/0/'	=>	'?',
+	'/sub/64/0/'	=>	'?',
+	'/sub/65/0/'	=>	'?',
+	'/sub/66/0/'	=>	'Video > 3D',
+	'/sub/67/0/'	=>	'Games > XXX',
+	'/sub/68/0/'	=>	'Music > Concerts',
+	'/sub/69/0/'	=>	'Music > AAC',
+	'/sub/70/0/'	=>	'Video > HEVC/x265',
+	'/sub/71/0/'	=>	'Video > HEVC/x265',
+	'/sub/72/0/'	=>	'Games > 3DS',
+	'/sub/73/0/'	=>	'Video > Bollywood',
+	'/sub/74/0/'	=>	'Video > Cartoon',
+	'/sub/75/0/'	=>	'Video > TV Series',
+	'/sub/76/0/'	=>	'Video > Movies UHD',
+	'/sub/77/0/'	=>	'Games > PS4',
+	'/sub/78/0/'	=>	'Video > Anime',
+	'/sub/79/0/'	=>	'Video > Anime Dubbed',
+	'/sub/80/0/'	=>	'Video > Anime Subbed',
+
+    );
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-	    $in{table} = 1 if /^<table class="table-list table table-responsive table-striped">$/;
-	    $in{table} = 0 if /<\/table>/;
 
-	    #$in{row} = 1 if /^<td class="coll-1 name"><a href/ and $in{table};
-	    #$in{row} = 0 if /^<\/tr>$/;
+	    $in{table} = 1 if /^<tbody>$/;
+	    $in{table} = 0 if /^<\/tbody>$/;
 
-	    if( $t{domain} eq '1337x.to' ){
-	        if(/<td class="coll-1 name"><a href.+ href="(.+?)">(.+?)<\/a><\/td>$/){
-		    $t{link} = 'https://' . $t{domain} . $1;
-		    $t{title} = $2;
+	    if( $domain eq '1337x.to' ){
+		#if(/^<td class="coll-1 name"><a href="(.+?)".+href="(.+?)">(.+?)<\/a><\/td>$/ and $in{table}){
+	        if(/^<td class="coll-1 name"><a href="(.+?)".+href="(.+?)">(.+?)<\/a>.*<\/td>$/ and $in{table}){
+    		    $t{api} = 'x137';
+    		    $t{domain} = $domain;
+		    $t{category} = $category{"$1"};
+		    $t{link} = 'https://' . $t{domain} . $2;
+		    $t{title} = $3;
 	        }
     	    } else { 
-		if(/^<td class="coll-1 name"><a href=".+?<\/i><\/a><a href="\/\/(.+?)">(.+?)<\/a><\/td>$/){
-		    $t{link} = 'https://' . $1;
-		    $t{title} = $2;
+		if(/^<td class="coll-1 name"><a href=".+(\/sub\/\d+\/\d\/?)".+<\/i><\/a><a href="\/\/(.+?)">(.+?)<\/a><\/td>$/ and $in{table}){
+    		    $t{api} = 'x137';
+    		    $t{domain} = $domain;
+		    $t{category} = $category{"$1"};
+		    $t{link} = 'https://' . $2;
+		    $t{title} = $3;
 		}
 	    }
 
-	    if(/^<td class="coll-2 seeds">(\d+?)<\/td>$/){
-	        $t{seeds} = $1;
+	    if(/^<td class="coll-2 seeds">(\d+?)<\/td>$/ and $in{table}){
+		$t{seeds} = $1;
 	    }
 
-	    if(/^<td class="coll-3 leeches">(\d+?)<\/td>$/){
+	    if(/^<td class="coll-3 leeches">(\d+?)<\/td>$/ and $in{table}){
 	        $t{leechs} = $1;
 	    }
 
-	    if(/^<td class="coll-date">(.+?)<\/td>$/){
+	    if(/^<td class="coll-date">(.+?)<\/td>$/ and $in{table}){
 	        $t{added} = $1;
 	        $t{added} =~ s/'//g;
 	    }
 
-	    if(/^<td class="coll-4 size mob-uploader">(.+?)<span/){
+	    if(/^<td class="coll-4 size mob.+?">(.+?)<span/ and $in{table}){
 	        $t{size} = $1;
 	    }
 
-	    if(/^<td class="coll-5 uploader"><a href="\/.+?">(.+?)<\/a><\/td>$/){
+	    if(/^<td class="coll-5 .+?"><a href="\/.+?">(.+?)<\/a><\/td>$/ and $in{table}){
 	        $t{uploader} = $1;
 	    }
 	    
-	    if(/^<\/tr>$/){
+	    if(/^<\/tr>$/ and $in{table}){
 	        push @item, {%t};
 	    }
-
     }
     close $fh;
     return \@item;
