@@ -36,7 +36,6 @@ sub x137 {
 	if(/1337x\.to/){
 	    $url = 'https://' . $_ . '/sort-search/' . join('%20', @$keywords) . '/seeders/desc/1/';
 	} elsif(/^1337x\..+workers\.dev$/) {
-	   #https://1337x.hashheathledger.workers.dev/1691817304364/srch?search=pulp+fiction
 	    $url = 'https://' . $_ . "/$time/" . 'srch?search=' . join('%20', @$keywords);
         }
 
@@ -143,7 +142,6 @@ sub results {
 	    $in{table} = 0 if /^<\/tbody>$/;
 
 	    if( $domain eq '1337x.to' ){
-		#if(/^<td class="coll-1 name"><a href="(.+?)".+href="(.+?)">(.+?)<\/a><\/td>$/ and $in{table}){
 	        if(/^<td class="coll-1 name"><a href="(.+?)".+href="(.+?)">(.+?)<\/a>.*<\/td>$/ and $in{table}){
     		    $t{api} = 'x137';
     		    $t{domain} = $domain;

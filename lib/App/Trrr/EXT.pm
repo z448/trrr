@@ -18,8 +18,8 @@ use Data::Dumper;
 sub ext {
     my $keywords = shift;
     my @domain = (
-	'extratorrent.st',
 	'extratorrents.it',
+	'extratorrent.st',
     );
 
     my $url;
@@ -33,8 +33,7 @@ sub ext {
 	my $response = HTTP::Tiny->new->get($url);
 	#print "domain:$_\n"; print Dumper($response);
 	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
-	print "domain: $_ not success\n" and next unless $response->{success};
-	#next unless $response->{success};
+	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
     }
 }
