@@ -133,8 +133,10 @@ sub results {
 	'/sub/78/0/'	=>	'Video > Anime',
 	'/sub/79/0/'	=>	'Video > Anime Dubbed',
 	'/sub/80/0/'	=>	'Video > Anime Subbed',
-
+	'/sub/81/0/'	=>	'Video > Anime',
+	'/sub/82/0/'	=>	'Games > Switch',
     );
+
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
 
