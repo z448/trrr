@@ -139,21 +139,9 @@ sub get_torrent {
 	    no strict "refs";
             open_app( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/ }
 
-=head1
-    if( $picked->{api} eq 'rarbg' ){
-    	open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
-	#exit;
-	    #make request to $picked->{title} $picked->{link} and scrap its magnet link; so far you dont have $picked->{domain} and $picked->{link}
-    } elsif( $picked->{api} eq 'yts' ){
-   	open_app( yts($picked->{link}) ) if $opt->{key} =~ /[a-o]/; 
-    } elsif( $picked->{api} eq 'kat' ){
-	if($picked->{magnet}){
-   	    open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/; 
-    	} elsif($picked->{link}){
-	    open_app( kat($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
-	}
-    } else { open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/ }
-=cut
+    #if( $picked->{api} eq 'rbg' ){
+    #	open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
+    #} else { open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/ }
 }
 
 show();
