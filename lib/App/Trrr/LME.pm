@@ -12,21 +12,18 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
-use v5.10;
 use HTTP::Tiny;
-use Data::Dumper;
 
 sub lme {
     my $keywords = shift;
     if( $keywords =~ /\.html$/ ){
-        # it's comming from get_torrent() and you need to return magnet link
         my $response = HTTP::Tiny->new->get($keywords);
         die "Failed to get $keywords\n" unless $response->{success};
         return magnet($response->{content}) if $response->{success};
     }
 
     my @domain = ( 
-	    'www.limetorrents.to',
+	    'www.limetorrents.to'
     );
 
     my $url;
@@ -51,7 +48,6 @@ sub results {
   	    $line =~ s/<tr bgcolor=("#FFFFFF"|"#F4F4F4")><td class="/\n/g;
 	    open(my $onefh, '<', \$line) || die "can't open \$1: $!";
 	    while(<$onefh>){
-		say "$_\n"; # HERE <----- doesn't work
 	        if(/csprite_dl14"><\/a><a href="(\/.+?)">(.+?)<\/a><\/div><div class="tt-options"><\/div><\/td><td class="tdnormal">(.+) - in (.+?)<\/a><\/td><td class="tdnormal">(.+?)<\/td><td class="tdseed">(.+?)<\/td><td class="tdleech">(.+?)<.+/){
 		    $t{api} = 'lme';
 		    $t{domain} = $domain;

@@ -12,15 +12,12 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
-use v5.10;
 use HTTP::Tiny;
 use Time::HiRes qw(gettimeofday);
-use Data::Dumper;
 
 sub x137 {
     my $keywords = shift;
     if( $keywords =~ /\/$/ ){
-        # it's comming from get_torrent() and you need to return magnet link
         my $response = HTTP::Tiny->new->get($keywords);
         die "Failed to get $keywords\n" unless $response->{success};
         return magnet($response->{content}) if $response->{success};

@@ -11,23 +11,21 @@ App::Trrr::RBG
 our $VERSION = '0.01';
 
 use strict;
-use Carp;
+use warnings;
 use HTTP::Tiny;
-use Data::Dumper;
 
 sub rbg {
     my $keywords = shift;
     if( $keywords =~ /\.html$/ ){
-        # it's comming from get_torrent() and you need to return magnet link
         my $response = HTTP::Tiny->new->get($keywords);
-        croak "Failed to get $keywords\n" unless $response->{success};
+        die "Failed to get $keywords\n" unless $response->{success};
         return magnet($response->{content}) if $response->{success};
     }
 
     my @domain = (
 	    'rargb.to',
-	    'www.rarbgproxy.to', # rarbgproxy.to
-	    'www2.rarbggo.to', # rarbggo.to
+	    'www.rarbgproxy.to',
+	    'www2.rarbggo.to',
 	    'rarbg.unblockninja.com'
     );
 
@@ -53,7 +51,7 @@ sub results {
 
 	if(/ href="(.+)?" title="(.+)?"/ and $in_table == 1){
 	    $t{api} = 'rbg';
-	    $t{domain} = $domain; # or $t{domain} = 'rarbg' ?
+	    $t{domain} = $domain;
 	    $t{link} = $1; $t{link} = 'https://' . $domain . $t{link};
 	    $t{title} = $2;
     	} 
@@ -78,7 +76,7 @@ sub results {
 	    $t{leechs} = $1;
 	}
 
-	if(/<td align="center" class="lista">(.*)<\/td>\R$/){
+	if(/<td align="center" class="lista">(.*)<\/td>\r/){
 	    $t{uploader} = $1;
             push @item, {%t};
         }
@@ -95,16 +93,12 @@ sub magnet {
     while(<$fh>){
 	if(/href="(magnet.+)"/){
 	    my $magnet = $1;
-        $magnet =~ s/ /%20/g;
-        $magnet =~ s/"/%22/g;
+            $magnet =~ s/ /%20/g;
+            $magnet =~ s/"/%22/g;
 	    return $magnet;
 	}
     }
 }
-
-
-#my @query = ('pulp', 'fiction' ); 
-#print Dumper( rbg( \@query ) );
 
 
 1;

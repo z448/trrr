@@ -13,13 +13,12 @@ our $VERSION = '0.01';
 use strict;
 use warnings;
 use HTTP::Tiny;
-use Data::Dumper;
 
 sub ext {
     my $keywords = shift;
     my @domain = (
 	'extratorrents.it',
-	'extratorrent.st',
+	'extratorrent.st'
     );
 
     my $url;
@@ -31,7 +30,6 @@ sub ext {
 	}
 
 	my $response = HTTP::Tiny->new->get($url);
-	#print "domain:$_\n"; print Dumper($response);
 	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
 	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};

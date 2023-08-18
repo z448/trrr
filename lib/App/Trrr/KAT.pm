@@ -12,28 +12,25 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
-use Carp;
 use HTTP::Tiny;
 use URL::Encode q(url_decode_utf8);
-use Data::Dumper;
 
 sub kat {
     my $keywords = shift;
     if( $keywords =~ /\.html$/ ){
-        # it's comming from get_torrent() and you need to return magnet link
         my $response = HTTP::Tiny->new->get($keywords);
-        croak "Failed to get $keywords\n" unless $response->{success};
+        die "Failed to get $keywords\n" unless $response->{success};
         return magnet($response->{content}) if $response->{success};
     }
 
     my @domain = (
-	'zkatcr.to',
-	'zkickasstorrents.to',
-	'zkickasstorrent.cr',
-	'zkat.am',
-	'zthekat.info', # tmp <-- put it back at [4]th place
-	'zkick4ss.com',
-	'kat.rip',
+	'katcr.to',
+	'kickasstorrents.to',
+	'kickasstorrent.cr',
+	'kat.am',
+	'thekat.info', 
+	'kick4ss.com',
+	'kat.rip'
     );
 
     my $url;
@@ -45,7 +42,7 @@ sub kat {
         }
 
 	my $response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
 	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
     }
@@ -125,7 +122,6 @@ sub results {
 	        $t{api} = 'kat';
 	        $t{title} = $1;
 		$t{uploader} = '?';
-		#$t{category} = '?';
 	    }
 
 	    if(/cat_12975568"><strong><a href="\/(.+?)"/ and $in_table){
@@ -145,7 +141,6 @@ sub results {
 		$t{size} =~ s/ //;
 	    }
 
-	    #if(/<td class="nobr center" title="4 years ago">(\d+ \w+) ago<\/td>$/){
 	    if(/<td class="nobr center" title=".+?">(\d+ \w+|just now) ago<\/td>$/ and $in_table){
 		$t{added} = $1;
 	    
@@ -174,8 +169,6 @@ sub magnet {
     while(<$fh>){
 	if(/href="(magnet:.+?)"/){
 	    my $magnet = $1;
-	    #$magnet =~ s/ /%20/g;
-	    #$magnet =~ s/"/%22/g;
 	    return $magnet;
 	}
     }

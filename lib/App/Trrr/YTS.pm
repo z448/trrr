@@ -12,9 +12,8 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
-use Carp;
 use HTTP::Tiny;
-use JSON::PP;
+use JSON;
 
 
 sub yts {
@@ -22,7 +21,7 @@ sub yts {
 
     if( $keywords =~ /^https:\/\// ){
         my $response = HTTP::Tiny->new->get($keywords);
-        croak "Failed to get $keywords\n" unless $response->{success};
+        die "Failed to get $keywords\n" unless $response->{success};
         return magnet($response->{content}) if $response->{success};
     }
     
@@ -35,10 +34,8 @@ sub yts {
     for( @domain ){
 	my $url = 'https://' . $_ . '/ajax/search?query=' . join('%20', @$keywords);
 	$response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
-	
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
 	next unless $response->{success};
-
 	return results($response->{content}, $_) if $response->{success};
     }
 }
@@ -47,8 +44,9 @@ sub yts {
 sub results {
     my( $content, $domain ) = @_;
      
-    my $json = JSON::PP->new->ascii->pretty->allow_nonref;
-    $content = $json->decode($content);
+    #my $json = JSON::PP->new->ascii->pretty->allow_nonref;
+    #$content = $json->decode($content);
+    $content = decode_json($content);
 
     my( @item, %t ) = ();
     for(@{$content->{data}}){

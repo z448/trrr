@@ -10,15 +10,11 @@ App::Trrr::TPB - TPB API
 @EXPORT_OK = qw( tpb );
 our $VERSION = '0.01';
 
-use v5.10;
 use strict;
 use warnings;
 use JSON;
-use Carp;
 use HTTP::Tiny;
-use JSON;
 use List::Util qw(first);
-use Data::Dumper;
 
 sub size {
     my $bytes = shift;
@@ -135,8 +131,6 @@ sub results {
     	open(my $fh,"<",\$content) || die "cant open \$content: $!";
     	while(<$fh>){
 	    $in{table} = 1 if /\(<a href="/;    
-	    #$in{table} = 1 if /^<tr>\r/;    
-	    #$in{table} = 1 if /^<div class="detName">/;    
 	    $in{table} = 0 if /\t<\/tr>\r$/;    
 
 	    if(/\(<a href=".+?>(.+?)</ and $in{table}){
@@ -180,8 +174,8 @@ sub results {
 sub tpb {
     my $keywords = shift;
     my @domain = (
-	'apibay.org', # 'https://' . 'apibay.org' . '/q.php?q=' . join('%20', @$keywords) . '&cat=0'
-	'pirateproxy.live', # 'https://' . 'pirateproxy.live' . '/search/' . join('%20', @$keywords) . '/1/99/0' 
+	'apibay.org',
+	'pirateproxy.live',
 	'thepiratebay.zone',
 	'pirate-proxy.ink',
 	'www.pirateproxy-bay.com',
