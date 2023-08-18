@@ -44,17 +44,15 @@ sub open_app {
 
 =head1 DESCRIPTION
     
-CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
+CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default torrent client. On iOS, magnet link is placed into clipboard.
 
 =head1 USAGE
     
-Search with as many parameters as needed. Uses KAT by default, C<-P> will switch to TPB.
+Search with as many parameters as needed. 
 
 =over 10
 
 C<trrr keyword1 keyword2 keywordN>
-
-C<trrr keyword1 keyword2 keywordN -P>
 
 =back
 
@@ -80,11 +78,13 @@ C<trrr keyword1 keyword2 keywordN -100>
 
 _
 
-To get another torrent from previous search add key as parameter. This is mandatory on Windows running 'Git/Bash for Windows' where you have to specify key on CLI upfront.
+To open any magnet link from results automaticaly add C<-[key]>. This is mandatory on Windows running 'Git/Bash for Windows' where you have to specify key on CLI upfront.
+
+Open first (A) magnet link from results automaticaly.
 
 =over 10
 
-C<trrr keyword1 keyword2 keywordN -b>
+C<trrr keyword1 keyword2 keywordN -a>
 
 =back
 
