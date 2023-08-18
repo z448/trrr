@@ -52,7 +52,7 @@ sub results {
 	$in_table = 0 if /<\/table>/;
 
 	if(/ href="(.+)?" title="(.+)?"/ and $in_table == 1){
-	    $t{api} = 'rarbg';
+	    $t{api} = 'rbg';
 	    $t{domain} = $domain; # or $t{domain} = 'rarbg' ?
 	    $t{link} = $1; $t{link} = 'https://' . $domain . $t{link};
 	    $t{title} = $2;
