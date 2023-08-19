@@ -119,7 +119,7 @@ sub results {
         	$t{size} = size($_->{size});
 	        $t{seeds} = $_->{seeders};
 	        $t{leechs} = $_->{leechers};
-	        $t{category} = $category{"$_->{category}"};
+	        $t{category} = $category{"$_->{category}"} || '?';
 	
 	    	push @item, {%t};
     	    }
@@ -142,11 +142,11 @@ sub results {
 	        $t{title} = $1;
 	    }
 
-	    if(/^<a href="(magnet:.+?)".+<a href=".+\/user\/(.+?)\/.+Uploaded (.+?), Size (.+?),/ and $in{table}){
+	    if(/^<a href="(magnet:.+?)".+Uploaded (.+?), Size (.+?),(.+)(\/|>)(.+?)<\/(i>|a> )<\/font>\r/ and $in{table}){ 
 	        $t{magnet} = $1;
-	        $t{user} = $2; 
-		$t{added} = $3;
-		$t{size} = $4; 
+		$t{added} = $2;
+		$t{size} = $3; 
+	        $t{user} = $6; 
 		$t{added} =~ s/&nbsp;/-/;
 		$t{size} =~ s/&nbsp;/\ /; $t{size} =~ s/iB/b/;
 	    }
@@ -197,7 +197,7 @@ sub tpb {
     	    }
 	    
 	    $response = HTTP::Tiny->new->get($url) ;
- 	    if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+ 	    if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
 	    next unless $response->{success};
 	    return results($response->{content}, $_) if $response->{success};
     }
