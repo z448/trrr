@@ -130,7 +130,6 @@ sub results {
 
 	    if(/Posted by$/){ $in_uploader = 1 }
             if(/        ([a-zA-Z0-9_\.]+)$/ and $in_table and $in_uploader){
-		#HERE
 		$t{uploader} = $1;
 		$in_uploader = 0;
 	    }
