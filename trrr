@@ -26,15 +26,13 @@ use Data::Dumper;
 if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
-
-if($ARGV[0] eq undef  or $ARGV[0] eq '-P' or $ARGV[0] eq '-R' or $ARGV[0] eq '-Y' or $ARGV[0] eq '-K' or $ARGV[0] eq '-E' or $ARGV[0] eq '-X' or $ARGV[0] eq '-L'){ 
-    push @keyword, split(" ", clip());
-    for(@keyword){ s/\s*//g }
-    #print "$_" for @keyword;
+if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L)$/) ){
+    push @keyword, split(/\s+/, clip());
 }
 
+
 sub api {
-    my $a = shift || "kat";
+    my $a = shift || "tpb";
     my %api = (
         tpb =>  sub { tpb(@_) },
         kat =>  sub { kat(@_) },
