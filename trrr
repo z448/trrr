@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use 5.010;
 use strict;
+use warnings;
 
 =head1 NAME
 
@@ -9,8 +9,6 @@ trrr - search torrents
 
 =cut
 
-use POSIX qw< ceil >;
-use Encode qw< encode >;
 use Term::ANSIColor;
 use App::Trrr qw< open_app >;
 use App::Trrr::KAT qw< kat >;
@@ -21,9 +19,7 @@ use App::Trrr::EXT qw< ext >;
 use App::Trrr::X137 qw< x137 >;
 use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clip >;
-use Data::Dumper;
 
-if( $ARGV[0] eq '-h' ){ system("perldoc trrr"); exit }
 
 my @keyword = ();
 if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L)$/) ){
@@ -31,115 +27,99 @@ if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L)$/
 }
 
 
-sub api {
-    my $a = shift || "tpb";
-    my %api = (
-        tpb =>  sub { tpb(@_) },
-        kat =>  sub { kat(@_) },
-        rbg =>  sub { rbg(@_) },
-        yts =>  sub { yts(@_) },
-        ext =>  sub { ext(@_) },
-        x137 =>  sub { x137(@_) },
-        lme =>  sub { lme(@_) },
-    );
-    return $api{$a};
-}
-
 my $opt = {
-    os      =>  "$^O",
     seeds   =>  1,
     api     =>  "tpb", # sets TPB as default
 };
 
 for(@ARGV){
     if(/^\-/){
-        s/\-//;
-        if(/[a-z]/){ $opt->{key} = lc $_ }
-        if(/[0-9]+/){ $opt->{seeds} = int $_ } 
-        if(/[P]/){ $opt->{api} = "tpb" }
-        if(/[R]/){ $opt->{api} = "rbg" }
-        if(/[Y]/){ $opt->{api} = "yts" }
-        if(/[K]/){ $opt->{api} = "kat" }
-        if(/[E]/){ $opt->{api} = "ext" }
-        if(/[X]/){ $opt->{api} = "x137" }
-        if(/[L]/){ $opt->{api} = "lme" }
-    } else { my $keyword = lc $_; push @keyword, $keyword }
+	s/\-//;
+        if(/^(-help|help)$/){ system("perldoc trrr") and exit }
+        if(/^[a-o]$/){ $opt->{key} = $_ }
+        if(/^\d+$/){ $opt->{seeds} = $_ } 
+        if(/^P$/){ $opt->{api} = "tpb" }
+        if(/^R$/){ $opt->{api} = "rbg" }
+        if(/^Y$/){ $opt->{api} = "yts" }
+        if(/^K$/){ $opt->{api} = "kat" }
+        if(/^E$/){ $opt->{api} = "ext" }
+        if(/^X$/){ $opt->{api} = "x137" }
+        if(/^L$/){ $opt->{api} = "lme" }
+    } else { push @keyword, $_ }
 }
 
 
-my $strip = sub {
-    my( $item, $field ) = @_;
+sub strip_title {
+    my $item = shift;
+    
     my $term_width  = int `tput cols`; 
     
     my $line = $item->{key} . ' ' . $item->{seeds} . ' ' . "$item->{title}" . ' ' . $item->{category} . ' ' . $item->{size};
-    my $max = $term_width - length($line);
-
     if( $term_width < length($line)){
         my $strip = length($line) - $term_width;
-	my $stripped_title = $term_width - $strip + 0;
-        $item->{title} = substr( $item->{title},0,$max);
+	my $max = length($item->{title}) - $strip - 3;
+        $item->{title} = substr($item->{title}, 0, $max);
+	$item->{title} = $item->{title} . '...';
     } 
-    my $title = $item->{title};
-    my $striped = {};
-    $striped->{title} = $title;
-    return $striped->{$field}
-};
+    return $item->{title};
+}
 
 
 sub show {
+    no strict "refs";
     my $key = 'A';
     my( $key_color ) = ();
     my $i = 1;
-    my $api = api($opt->{api});
 
-    my @filter = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $api->(\@keyword) };
+    my @result = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $opt->{api}(\@keyword) };
+    @result = sort { $b->{seeds} <=> $a->{seeds} } @result;
+    @result = splice(@result,0,15);
 
-    @filter = sort { $b->{seeds} <=> $a->{seeds} } @filter;
-    my @f = splice(@filter,0,15);
-
-    unless(@f){ say colored(['yellow'], 'no results') and exit }
-    for(@f){
+    unless(@result){ print colored(['yellow'], 'no results') . "\n" and exit }
+    
+    for(@result){
         if( $i % 2 ){ $key_color = 'black on_white' } else { $key_color = 'white on_black' }
-
         $_->{key} = $key;
-        my $title = $strip->($_,'title');
-	#$_->{seeds} = '' if($_->{api} eq 'yts');
-        if($_->{api} eq 'yts'){ say colored([$key_color],$key) . ' ' .  colored(['yellow'],$title) . ' ' . colored(['yellow'], "($_->{year})") . ' ' . colored(['grey8'],$_->{category}) if defined $_->{key} } else {
-        say colored([$key_color],$key) . ' ' . colored(['cyan'],$_->{seeds}) . ' ' .  colored(['yellow'],$title) . ' ' . colored(['grey8'],$_->{category}) . ' ' . colored(['bold'],$_->{size}) if defined $_->{key} }
+
+        if($_->{api} eq 'yts'){
+		print colored([$key_color], $key) . ' ' .  colored( ['yellow'], strip_title($_) ) . ' ' . colored(['yellow'], $_->{year}) . ' ' . colored(['grey8'], $_->{category}) . "\n";
+	} else {
+		print colored([$key_color], $key) . ' ' . colored(['cyan'], $_->{seeds}) . ' ' .  colored( ['yellow'], strip_title($_) ) . ' ' . colored(['grey8'], $_->{category}) . ' ' . colored(['bold'], $_->{size}) . "\n";
+	}
         $key++; $i++;
     }
-    key(\@f);
+    wait_key(\@result);
 }
 
-sub key {
-    my $filter = shift;
-    get_torrent($filter) if defined $opt->{key};
+sub wait_key {
+    my $result = shift;
 
-    if( $opt->{os} eq 'MSWin32' or $opt->{os} eq 'msys' ){ 
-        exit unless defined $opt->{key};
+    if( $opt->{key} ){
+	get_torrent($result) and exit;
     } else {
-        exit if defined $opt->{key};
-        say colored(['blink'],'^') . ' ' . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY');
+
+        if( $^O eq 'MSWin32' or $^O eq 'msys' ){ 
+            print "To pick from results repeat search and add -[key] (e.g. -a)\n" and exit;
+        }
+	
+        print colored(['blink'],'^') . ' ' . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY') . "\n";
         require App::Trrr::HotKey;
         App::Trrr::HotKey->import( 'readkey' ) ;
         $opt->{key} = readkey();
-        get_torrent($filter);
+        get_torrent($result);
     }
 }
 
 sub get_torrent {
-    my $filter = shift;
-    my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$filter;
+    no strict "refs";
+    my $result = shift;
+    my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$result;
 
     if( $picked->{magnet} ){
-   	    open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/; 
+	open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/; 
     } else { 
-	    no strict "refs";
-            open_app( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/ }
-
-    #if( $picked->{api} eq 'rbg' ){
-    #	open_app( rbg($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
-    #} else { open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/ }
+        open_app( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
+    }
 }
 
 show();
