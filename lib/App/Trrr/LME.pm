@@ -8,7 +8,7 @@ App::Trrr::LME
 
 @ISA = qw(Exporter);
 @EXPORT_OK = qw( lme );
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use strict;
 use warnings;
@@ -30,7 +30,7 @@ sub lme {
     for( @domain ){
 	my $url = 'https://' . $_ . '/search/all/' . join('-', @$keywords) . '/seeds/1/';
 	my $response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
+	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
 	next unless $response->{success};
 	return results($response->{content}, $_) if $response->{success};
     }
@@ -46,9 +46,10 @@ sub results {
 	if(/^<\/tr><tr bgcolor="#F4F4F4"><td class="tdleft">(.+)/){
 	    my $line = $1;
   	    $line =~ s/<tr bgcolor=("#FFFFFF"|"#F4F4F4")><td class="/\n/g;
+
 	    open(my $onefh, '<', \$line) || die "can't open \$1: $!";
 	    while(<$onefh>){
-	        if(/csprite_dl14"><\/a><a href="(\/.+?)">(.+?)<\/a><\/div><div class="tt-options"><\/div><\/td><td class="tdnormal">(.+) - in (.+?)<\/a><\/td><td class="tdnormal">(.+?)<\/td><td class="tdseed">(.+?)<\/td><td class="tdleech">(.+?)<.+/){
+	        if(/csprite_dl14"><\/a><a href="(\/.+?)">(.+?)<\/a><\/div><div class="tt-options"><\/div><\/td><td class="tdnormal">(.+) - in (.+?)<\/a><\/td><td class="tdnormal">(.+?)<\/td><td class="tdseed">(.+?)<\/td><td class="tdleech">(.+?)</){
 		    $t{api} = 'lme';
 		    $t{domain} = $domain;
 		    $t{link} = 'https://' . $t{domain} . $1;
@@ -56,8 +57,12 @@ sub results {
 		    $t{added} = $3;
 		    $t{category} = $4;
 		    $t{size} = $5;
-		    $t{seeds} = $6;
-		    $t{leechs} = $7;
+		    $t{seeds} = $6; 
+		    $t{leechs} = $7; 
+
+		    $t{seeds} =~ s/,//;
+		    $t{leechs} =~ s/,//;
+		    
 		    push @item, {%t};
 		}
 	    }
