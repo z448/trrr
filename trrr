@@ -52,8 +52,14 @@ for(@ARGV){
 sub strip_title {
     my $item = shift;
     
-    my $term_width  = int `tput cols`; 
-    
+    my $term_width = 0; 
+    open(my $tput_ph, '-|', 'tput', 'cols');
+    while(<$tput_ph>){
+	    chomp;
+	    $term_width = $_;
+    }
+    close $tput_ph;
+
     my $line = $item->{key} . ' ' . $item->{seeds} . ' ' . "$item->{title}" . ' ' . $item->{category} . ' ' . $item->{size};
     if( $term_width < length($line)){
         my $strip = length($line) - $term_width;
