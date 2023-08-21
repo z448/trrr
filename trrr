@@ -10,7 +10,7 @@ trrr - search torrents
 =cut
 
 use Term::ANSIColor;
-use App::Trrr qw< open_app >;
+use App::Trrr qw< open_magnet >;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
 use App::Trrr::RBG qw< rbg >;
@@ -123,9 +123,9 @@ sub get_torrent {
     my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$result;
 
     if( $picked->{magnet} ){
-	open_app("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
+	open_magnet("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
     } else { 
-        open_app( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
+        open_magnet( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
     }
 }
 
