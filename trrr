@@ -20,6 +20,7 @@ use App::Trrr::X137 qw< x137 >;
 use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clip >;
 
+# test
 
 my @keyword = ();
 if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L)$/) ){
