@@ -20,7 +20,6 @@ use App::Trrr::X137 qw< x137 >;
 use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clip >;
 
-# test
 
 my @keyword = ();
 if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L)$/) ){
@@ -50,48 +49,44 @@ for(@ARGV){
 }
 
 
-sub strip_title {
-    my $item = shift;
-    
-    my $term_width = 0; 
-    open(my $tput_ph, '-|', 'tput', 'cols');
-    while(<$tput_ph>){
-	    chomp;
-	    $term_width = $_;
-    }
-    close $tput_ph;
-
-    my $line = $item->{key} . ' ' . $item->{seeds} . ' ' . "$item->{title}" . ' ' . $item->{category} . ' ' . $item->{size};
-    if( $term_width < length($line)){
-        my $strip = length($line) - $term_width;
-	my $max = length($item->{title}) - $strip - 3;
-        $item->{title} = substr($item->{title}, 0, $max);
-	$item->{title} = $item->{title} . '...';
-    } 
-    return $item->{title};
+my $term_width = 0; 
+open(my $tput_ph, '-|', 'tput', 'cols');
+while(<$tput_ph>){
+    chomp;
+    $term_width = $_;
 }
+close $tput_ph;
 
 
 sub show {
     no strict "refs";
-    my $key = 'A';
-    my( $key_color ) = ();
-    my $i = 1;
 
     my @result = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $opt->{api}(\@keyword) };
     @result = sort { $b->{seeds} <=> $a->{seeds} } @result;
     @result = splice(@result,0,15);
 
     unless(@result){ print colored(['yellow'], 'no results') . "\n" and exit }
-    
+
+    my $key = 'A';
+    my( $key_color ) = ();
+    my $i = 1;
+
     for(@result){
         if( $i % 2 ){ $key_color = 'black on_white' } else { $key_color = 'white on_black' }
         $_->{key} = $key;
 
+    	my $line = $key . ' ' . $_->{seeds} . ' ' .  $_->{title} . ' ' . $_->{category} . ' ' . $_->{size};
+    	if( $term_width < length($line)){
+            my $strip = length($line) - $term_width;
+	    my $max = length($_->{title}) - $strip - 3;
+            $_->{title} = substr($_->{title}, 0, $max);
+ 	    $_->{title} = $_->{title} . '...';
+        } 
+
         if($_->{api} eq 'yts'){
-		print colored([$key_color], $key) . ' ' .  colored( ['yellow'], strip_title($_) ) . ' ' . colored(['yellow'], $_->{year}) . ' ' . colored(['grey8'], $_->{category}) . "\n";
+		print colored([$key_color], $key) . ' ' .  colored( ['yellow'], $_->{title} ) . ' ' . colored(['yellow'], $_->{year}) . ' ' . colored(['grey8'], $_->{category}) . "\n";
 	} else {
-		print colored([$key_color], $key) . ' ' . colored(['cyan'], $_->{seeds}) . ' ' .  colored( ['yellow'], strip_title($_) ) . ' ' . colored(['grey8'], $_->{category}) . ' ' . colored(['bold'], $_->{size}) . "\n";
+		print colored([$key_color], $key) . ' ' . colored(['cyan'], $_->{seeds}) . ' ' .  colored(['yellow'], $_->{title} ) . ' ' . colored(['grey8'], $_->{category}) . ' ' . colored(['bold'], $_->{size}) . "\n";
 	}
         $key++; $i++;
     }
