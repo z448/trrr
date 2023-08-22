@@ -10,7 +10,6 @@ trrr - search torrents
 =cut
 
 use Term::ANSIColor;
-use App::Trrr qw< open_magnet >;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
 use App::Trrr::RBG qw< rbg >;
@@ -19,6 +18,9 @@ use App::Trrr::EXT qw< ext >;
 use App::Trrr::X137 qw< x137 >;
 use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clip >;
+
+
+our $VERSION = '0.16';
 
 
 my @keyword = ();
@@ -56,6 +58,45 @@ while(<$tput_ph>){
     $term_width = $_;
 }
 close $tput_ph;
+
+
+sub dep{
+    my $dep = shift;
+
+    open( my $depph, "-|", 'which', $dep );
+    while(<$depph>){
+        chomp;
+        return $_ if /\/$dep$/;
+    }
+}
+
+
+sub os{
+    my $os = $^O;
+
+    open(my $os_ph, '-|', 'uname', '-a');
+    while(<$os_ph>){
+        $os = 'iOS' if /iPhone/;
+    }
+    close $os_ph;
+
+    return $os;
+}
+
+
+sub open_magnet{
+    my $magnet = shift;
+
+    if(os() eq 'MSWin32' or os() eq 'msys'){
+        system("$magnet") and exit;
+    } elsif( os() =~ /iOS/){
+        print "Can't read pasteboard content, 'pbcopy' tool not installed.\n" and exit unless dep('pbcopy');
+        system("echo '$magnet   ' | pbcopy") and print "Magnet link has been placed into pasteboard\n";
+    } elsif( os() =~ /(linux|darwin)/ ){
+        print "Can't open magnet link, 'open' tool not installed.\n" and exit unless dep('open');
+        system("open '$magnet'");  
+    }
+}
 
 
 sub show {
