@@ -1,101 +1,79 @@
 package App::Trrr::Clipboard;
 
 @ISA = qw(Exporter);
-@EXPORT_OK = qw( clip );
-our $VERSION = '0.03';
+@EXPORT_OK = qw( clipboard );
+our $VERSION = '0.04';
 
-use warnings;
 use strict;
-use feature 'say';;
+use warnings;
+use autodie;
 
-sub os {
-    open my $pipe,"-|",'uname -a';
-    while(<$pipe>){
-        if(/iPhone/){ return 'iPhone' }
-        else { return $^O }
+my %tool = (
+    linux   =>  {
+        read    =>  [ 'xclip -o', 'xsel -o' ],
+        write   =>  [ 'xclip -i', 'xsel -i' ]
+    },
+    ios     =>  {
+        read    =>  [ 'pbcopy' ],
+        write   =>  [ 'pbpaste']
+    },
+    macos   =>  {
+        read    =>  [ 'pbcopy' ],
+        write   =>  [ 'pbpaste' ]
+    },
+    win     =>  {
+        read    =>  [ '/dev/clipboard' ],
+        write   =>  [ '/dev/clipboard' ]
+    }
+);
+
+
+my $os = $^O;
+open(my $os_ph, '-|', 'uname', '-a');
+while(<$os_ph>){
+    $os = 'ios' if /iPhone/;
+}
+close $os_ph;
+
+
+sub dep{
+    my $dep = shift;
+    $dep =~ s/^(.+?) .+/$1/;
+
+    open( my $depph, "-|", 'which', $dep );
+    while(<$depph>){
+        chomp;
+        return $_ if /\/$dep$/;
     }
 }
 
-my $os = os();
 
-sub tool {
-    my $tool = {
-        linux   => [ 'xsel', 'xclip' ],
-        iPhone	=> [ '. ;which perldoc -l Mac::PropertyList' ],
-        darwin  => [ 'pbpaste', 'pbcopy' ],
-        msys    => [ '/dev/clipboard' ],
-    };
-    for( @{$tool->{$os}} ){ return $_ if `which $_` }
-}
+sub clipboard{
+    my $in = shift;
+    $in = "$in   " if $os eq 'ios';
 
-sub clip {
-    my $tool = tool();
-    if( $tool =~/PropertyList/ ){
-        my $clip = ios_clip();
-        return $clip 
+    if($in){
+        for( @{$tool{$os}->{write}} ){
+            if( dep($_) ){ system("echo '$in' | $_") }
+        }
+    } else {
+        for my $tool( @{$tool{$os}->{read}} ){
+            if( dep($tool) ){ 
+                my $content = '';
+                open(my $ph, '-|', $tool );
+                while(<$ph>){
+                    chomp;
+                    $content = $content . ' ' . $_;
+                }
+                close $ph;
+                $content =~ s/\n/ /g;
+                $content =~ s/^ //;
+
+                return $content;
+            }
+        }
     }
-    my $string = shift || undef;
-    unless( $string ){ 
-        $tool = "$tool -o" if $tool eq 'xclip';
-        chomp(my $clip = `$tool`);
-        return $clip;
-    } else { return system("echo $string | $tool") }
-};
-
-# On iOS the clipboard functionality needs Mac::PropertyList and 'pbpaste' utillity
-sub ios_clip {
-       my( $data )= ();
-       my $c = '/private/var/mobile/Library/Caches/com.apple.UIKit.pboard/pasteboardDB';
-       {
-           local $/;
-           open(my $fh,"<",$c) || die "cant open $c: $!";
-           $data = <$fh>; close $fh;
-       }
-       my $load = eval {
-          require Mac::PropertyList;
-          Mac::PropertyList->import();
-          1;
-      };
-
-       unless($load){ die "cant load MacPropertylist" }
-       else {
-           my $plist = Mac::PropertyList::parse_plist( $data );
-           for(@{$plist}){
-               my $s = $_->as_perl;
-               unless($s eq 1){          
-                   if($s->{bundle} eq 'com.apple.UIKit.pboard'){
-                       for(@{$s->{items}->{mobile}}){
-                          my %hash = %{$_};
-                          for my $h(keys %hash){
-                               return $hash{$h} if $h eq 'public.text';
-                               return $hash{$h} if $h eq 'public.utf8-plain-text';
-                           }
-                       }
-                   }
-               }
-           }
-       }
 }
+
 
 1;
-
-
-
-
-
-
-
-
-=head1 create clipboard
-
-my $c = clip();
-
-=head1 read from clipboard
-
-print $c->();
-
-=head1 write to clipboard
-
-#print $c->('text')
-
-=cut
