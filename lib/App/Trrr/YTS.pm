@@ -13,7 +13,7 @@ our $VERSION = '0.01';
 use strict;
 use warnings;
 use HTTP::Tiny;
-use JSON;
+use JSON::PP;
 
 
 sub yts {

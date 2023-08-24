@@ -12,7 +12,7 @@ our $VERSION = '0.01';
 
 use strict;
 use warnings;
-use JSON;
+use JSON::PP;
 use HTTP::Tiny;
 use List::Util qw(first);
 
