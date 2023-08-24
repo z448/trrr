@@ -14,14 +14,14 @@ my %tool = (
         write   =>  [ 'xclip -i', 'xsel -i' ]
     },
     ios     =>  {
-        read    =>  [ 'pbcopy' ],
-        write   =>  [ 'pbpaste']
+        read    =>  [ 'pbpaste' ],
+        write   =>  [ 'pbcopy']
     },
-    macos   =>  {
-        read    =>  [ 'pbcopy' ],
-        write   =>  [ 'pbpaste' ]
+    darwin  =>  {
+        read    =>  [ 'pbpaste' ],
+        write   =>  [ 'pbcopy' ]
     },
-    win     =>  {
+        msys =>  {  # could be  also 'MSWin32' ? <---
         read    =>  [ '/dev/clipboard' ],
         write   =>  [ '/dev/clipboard' ]
     }
