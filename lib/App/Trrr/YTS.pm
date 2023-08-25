@@ -44,23 +44,21 @@ sub yts {
 sub results {
     my( $content, $domain ) = @_;
      
-    #my $json = JSON::PP->new->ascii->pretty->allow_nonref;
-    #$content = $json->decode($content);
     $content = decode_json($content);
 
     my( @item, %t ) = ();
     for(@{$content->{data}}){
-	$t{api} = 'yts';
-	$t{domain} = $domain;
-	$t{link} = $_->{url};
+	    $t{api} = 'yts';
+	    $t{domain} = $domain;
+	    $t{link} = $_->{url};
         $t{title} = $_->{title};
-	$t{category} = 'Movies';
-	$t{year} = $_->{year};
-	$t{size} = '?';
-	$t{seeds} = 1;
-	$t{leechs} = '?';
-	$t{uploader} = '?';
-	push @item, {%t};
+	    $t{category} = 'Movies';
+	    $t{year} = $_->{year};
+	    $t{size} = '?';
+	    $t{seeds} = 1;
+	    $t{leechs} = '?';
+	    $t{uploader} = '?';
+	    push @item, {%t};
     }
     return \@item;
 }
@@ -71,11 +69,10 @@ sub magnet {
     my %magnet = ();
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-	if(/href="(magnet.+?720p.+?)"/){ $magnet{'720p'} = $1 }
-	if(/href="(magnet.+?1080p.+?)"/){ $magnet{'1080p'} = $1 }
-	if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1 }
+	    if(/href="(magnet.+?720p.+?)"/){ $magnet{'720p'} = $1 }
+	    if(/href="(magnet.+?1080p.+?)"/){ $magnet{'1080p'} = $1 }
+	    if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1 }
     }
-    #return \%magnet;
     return $magnet{'2160p'} if exists $magnet{'2160p'};
     return $magnet{'1080p'} if exists $magnet{'1080p'};
     return $magnet{'720p'} if exists $magnet{'720p'};
