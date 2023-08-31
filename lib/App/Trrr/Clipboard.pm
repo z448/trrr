@@ -50,7 +50,13 @@ sub dep{
 
 sub clipboard{
     my $in = shift;
-    $in = "$in   " if $os eq 'ios';
+
+    if( $os eq 'ios' ){
+    	if(-e 'private/var/mobile/Library/Caches/com.apple.Pasteboard'){
+	    # do thing with file in this dir
+	} else { $in = "$in   " if $os eq 'ios' }
+    }
+    
 
     if($in){
         for( @{$tool{$os}->{write}} ){
