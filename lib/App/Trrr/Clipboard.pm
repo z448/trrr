@@ -4,6 +4,7 @@ package App::Trrr::Clipboard;
 @EXPORT_OK = qw( clipboard );
 our $VERSION = '0.04';
 
+use v5.10;
 use strict;
 use warnings;
 use autodie;
@@ -52,11 +53,41 @@ sub clipboard{
     my $in = shift;
 
     if( $os eq 'ios' ){
-    	if(-e 'private/var/mobile/Library/Caches/com.apple.Pasteboard'){
-	    # do thing with file in this dir
+	my $pb_dir = '/private/var/mobile/Library/Caches/com.apple.Pasteboard';
+    	if( -e $pb_dir ){
+	    opendir(my $pb_dir_dh, $pb_dir) || die "Can't opendir $pb_dir: $!";
+	    my( $pb_dir_dir ) = grep { !/^\./ && !/^\.\.$/ && -d "$pb_dir/$_" } readdir($pb_dir_dh);
+	    closedir $pb_dir_dh;
+
+	    opendir(my $pb_dir_dir_dh, "$pb_dir/$pb_dir_dir") || die "Can't opendir $pb_dir/$pb_dir_dir: $!";
+	    my @pb_dir_dir_file = grep { -f "$pb_dir/$pb_dir_dir/$_" } readdir($pb_dir_dir_dh);
+	    closedir $pb_dir_dir_dh;
+
+	    for my $file( @pb_dir_dir_file ){
+		next if -s "$pb_dir/$pb_dir_dir/$file" == 38 ;
+	        open(my $ph, '-|', 'file', "$pb_dir/$pb_dir_dir/$file") || die "Can't open 'file' pipe to file $pb_dir/$pb_dir_dir/$file: $!";
+		while(<$ph>){
+		    next unless /text, with no line terminators$/;
+
+		    if($in){
+			open(my $fh, '>', "$pb_dir/$pb_dir_dir/$file") || die "Can't open file for writing $pb_dir/$pb_dir_dir/$file: $!";
+			print $fh $in;
+			close $fh;
+			return $in;
+		    } else {
+		        open(my $fh, '<', "$pb_dir/$pb_dir_dir/$file") || die "Can't open file for reading $pb_dir/$pb_dir_dir/$file: $!";
+		        while(<$fh>){
+			    return $_;
+		        }
+		    	close $fh;
+		    } 
+		}
+		close $ph;
+	    }
+	} elsif( -e '/private/var/mobile/Library/Caches/com.apple.UIKit.pboard/pasteboardDB' ){
+	    # do thing with Mac::PropertyList ? and return
 	} else { $in = "$in   " if $os eq 'ios' }
     }
-    
 
     if($in){
         for( @{$tool{$os}->{write}} ){
@@ -80,6 +111,8 @@ sub clipboard{
         }
     }
 }
+
+say clipboard($ARGV[0]);
 
 
 1;
