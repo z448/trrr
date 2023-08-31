@@ -90,7 +90,7 @@ sub open_magnet{
         if( clipboard($magnet) ){
             print "Magnet link has been placed into pasteboard\n";
         } else {
-            print "Can't place magnet link into pasteboard, 'pbcopy' tool is not installed\n";
+            print "Magnet link:$magnet\n";
         }
     } elsif( $os =~ /(linux|darwin)/ ){
         print "Can't open magnet link, 'open' tool not installed.\n" and exit unless dep('open');
