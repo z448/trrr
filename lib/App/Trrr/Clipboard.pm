@@ -84,8 +84,6 @@ sub clipboard{
 		}
 		close $ph;
 	    }
-	} elsif( -e '/private/var/mobile/Library/Caches/com.apple.UIKit.pboard/pasteboardDB' ){
-	    # do thing with Mac::PropertyList ? and return
 	} else { $in = "$in   " if $os eq 'ios' }
     }
 
@@ -112,5 +110,6 @@ sub clipboard{
     }
 }
 
+say clipboard();
 
 1;
