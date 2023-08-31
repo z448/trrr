@@ -112,7 +112,5 @@ sub clipboard{
     }
 }
 
-say clipboard($ARGV[0]);
-
 
 1;
