@@ -161,7 +161,7 @@ sub get_torrent {
     if( $picked->{magnet} ){
 	open_magnet("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
     } else { 
-        open_magnet( $picked->{api}($picked->{link}) ) if $opt->{key} =~ /[a-o]/;
+        open_magnet( $picked->{api}("$picked->{link}") ) if $opt->{key} =~ /[a-o]/;
     }
 }
 

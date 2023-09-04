@@ -19,23 +19,32 @@ use JSON::PP;
 sub yts {
     my $keywords = shift;
 
+        print "\$keywords is:$keywords\n";
+
     if( $keywords =~ /^https:\/\// ){
+        print "in if() \$keywords is:$keywords\n";
         my $response = HTTP::Tiny->new->get($keywords);
         die "Failed to get $keywords\n" unless $response->{success};
+
+        print "magnet(\$response->{content}) is:" . magnet($response->{content}) . "\n";
         return magnet($response->{content}) if $response->{success};
     }
     
+    my $site_string = 'year":';
     my @domain = (
-	'yts.mx',
-	'yts.pm'
+        'yts.mx',
+        #'yts.pm'
     );
 
-    my $response = {};
     for( @domain ){
 	my $url = 'https://' . $_ . '/ajax/search?query=' . join('%20', @$keywords);
-	$response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
-	next unless $response->{success};
+	my $response = HTTP::Tiny->new->get($url);
+
+    unless($response->{content} =~ /$site_string/){
+        die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
+        next;
+    }
+
 	return results($response->{content}, $_) if $response->{success};
     }
 }
@@ -51,6 +60,8 @@ sub results {
 	    $t{api} = 'yts';
 	    $t{domain} = $domain;
 	    $t{link} = $_->{url};
+        $t{link} = 'https:' . $t{link} if $domain eq 'yts.pm';
+        print '$t{link} is:' . "$t{link}\n";
         $t{title} = $_->{title};
 	    $t{category} = 'Movies';
 	    $t{year} = $_->{year};
@@ -69,9 +80,9 @@ sub magnet {
     my %magnet = ();
     open(my $fh,'<', \$content) || die "cant open \$content: $!";
     while(<$fh>){
-	    if(/href="(magnet.+?720p.+?)"/){ $magnet{'720p'} = $1 }
-	    if(/href="(magnet.+?1080p.+?)"/){ $magnet{'1080p'} = $1 }
-	    if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1 }
+	    if(/href="(magnet.+?720p.+?)"/){ $magnet{'720p'} = $1; print "\$1 is:$1\n" }
+	    if(/href="(magnet.+?1080p.+?)"/){ $magnet{'1080p'} = $1; print "\$1 is:$1\n" }
+	    if(/href="(magnet.+?2160p.+?)"/){ $magnet{'2160p'} = $1; print "\$1 is:$1\n" }
     }
     return $magnet{'2160p'} if exists $magnet{'2160p'};
     return $magnet{'1080p'} if exists $magnet{'1080p'};

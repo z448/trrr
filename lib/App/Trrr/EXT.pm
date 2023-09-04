@@ -17,11 +17,12 @@ use HTTP::Tiny;
 sub ext {
     my $keywords = shift;
     my @domain = (
-	'extratorrents.it',
-	'extratorrent.st'
+    'extratorrents.it',
+    'extratorrent.st'
     );
 
     my $url;
+    my $site_string = 'seeds';
     for( @domain ){
 	if(/extratorrents\.it/){
 	    $url = 'https://' . $_ . '/search/' . '?search=' . join('%20', @$keywords) . '&s_cat=&pp=&srt=seeds&order=desc';
@@ -30,8 +31,12 @@ sub ext {
 	}
 
 	my $response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
-	next unless $response->{success};
+
+    unless($response->{content} =~ /$site_string/){
+        die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
+        next;
+    }
+    
 	return results($response->{content}, $_) if $response->{success};
     }
 }

@@ -176,7 +176,7 @@ sub results {
 sub tpb {
     my $keywords = shift;
     my @domain = (
-	'apibay.org',
+        #'apibay.org',
 	'pirateproxy.live',
 	'thepiratebay.zone',
 	'pirate-proxy.ink',
@@ -191,6 +191,7 @@ sub tpb {
 
     my $response = {};
     my $url;
+    my $site_string = 'eeders';
     for( @domain ){
 	    if(/^apibay\.org$/){
 		    $url = 'https://' . $_ . '/q.php?q=' . join('%20', @$keywords) . '&cat=0';
@@ -199,8 +200,12 @@ sub tpb {
     	    }
 	    
 	    $response = HTTP::Tiny->new->get($url) ;
- 	    if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
-	    next unless $response->{success};
+
+        unless($response->{content} =~ /$site_string/){
+            die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
+            next;
+        }
+
 	    return results($response->{content}, $_) if $response->{success};
     }
 } 

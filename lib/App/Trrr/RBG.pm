@@ -22,8 +22,10 @@ sub rbg {
         return magnet($response->{content}) if $response->{success};
     }
 
+    my $site_string = '<table width="100%" class="lista2t">';
     my @domain = (
-	    'rargb.to',
+        'rargb.to',
+        'rarbgget.org',
 	    'www.rarbgproxy.to',
 	    'www2.rarbggo.to',
 	    'rarbg.unblockninja.com'
@@ -31,10 +33,14 @@ sub rbg {
 
     for( @domain ){
         my $url = 'https://' . $_ . '/search/?search=' . join('%20', @$keywords) . '&order=seeders&by=DESC';
-	my $response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "non of the domains works:\n" . join("\n", @domain) }
-	next unless $response->{success};
-	return results($response->{content}, $_) if $response->{success};
+	    my $response = HTTP::Tiny->new->get($url);
+
+        unless($response->{content} =~ /$site_string/){
+            die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
+            next;
+        }
+
+	    return results($response->{content}, $_) if $response->{success};
     }
 }
 

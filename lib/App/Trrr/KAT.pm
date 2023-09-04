@@ -23,28 +23,32 @@ sub kat {
         return magnet($response->{content}) if $response->{success};
     }
 
+    my $site_string = 'data-download title="Download';
     my @domain = (
-	'katcr.to',
-	'kickasstorrents.to',
-	'kickasstorrent.cr',
-	'kat.am',
-	'thekat.info', 
-	'kick4ss.com',
-	'kat.rip'
+    'kat.rip',
+    'katcr.to',
+    'kickasstorrents.to',
+    'kickasstorrent.cr',
+    'thekat.info', 
+    'kat.am',
+    'kick4ss.com',
     );
 
     my $url;
     for( @domain ){
-	if(/katcr\.to/ || /kickasstorrents\.to/ || /kickasstorrent\.cr/ || /kat\.am/){
+	    if(/katcr\.to/ || /kickasstorrents\.to/ || /kickasstorrent\.cr/ || /kat\.am/){
 	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?sortby=seeders&sort=desc';
-	} else {
+        } else {
 	    $url = 'https://' . $_ . '/usearch/' . join('%20', @$keywords) . '/?field=seeders&sorder=desc';
         }
 
-	my $response = HTTP::Tiny->new->get($url);
-	if( !($response->{success}) and ($_ eq $domain[$#domain]) ){ die "none of the domains works:\n" . join("\n", @domain) }
-	next unless $response->{success};
-	return results($response->{content}, $_) if $response->{success};
+	    my $response = HTTP::Tiny->new->get($url);
+        
+        unless($response->{content} =~ /$site_string/){
+            die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
+            next;
+        }
+	    return results($response->{content}, $_) if $response->{success};
     }
 }
 
@@ -135,7 +139,7 @@ sub results {
 	    }
 
 	    if(/<td class="nobr center">(.+?)<\/span><\/td>$/ and $in_table){
-	        $t{size} = $1;
+	    $t{size} = $1;
 		$t{size} =~ s/B/b/;
 		$t{size} =~ s/ //;
 	    }
