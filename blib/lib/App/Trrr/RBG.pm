@@ -39,6 +39,7 @@ sub rbg {
             die "could not connect to any of following domains:\n" . join("\n", @domain) if $_ eq $domain[$#domain];
             next;
         }
+
 	    return results($response->{content}, $_) if $response->{success};
     }
 }
