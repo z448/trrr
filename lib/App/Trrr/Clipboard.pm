@@ -19,7 +19,7 @@ my %tool = (
         read  => ['pbpaste'],
         write => ['pbcopy']
     },
-    msys => {    # could be  also 'MSWin32' ? <---
+    msys => {    # could be also 'MSWin32' ? <---
         read  => ['/dev/clipboard'],
         write => ['/dev/clipboard']
     }
