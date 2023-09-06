@@ -67,7 +67,7 @@ sub clipboard {
                         open( my $fh, '>', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for writing $pb_dir/$pb_dir_dir/$file: $!";
                         print $fh $in;
                         close $fh;
-                        return $in;
+                        return "'" . $in . "' has been placed into pasteboard";
                     }
                     else {
                         open( my $fh, '<', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for reading $pb_dir/$pb_dir_dir/$file: $!";
@@ -126,5 +126,7 @@ sub clipboard {
     }
 }
 
+use v5.10;
+say clipboard( $ARGV[0] );
 
 1;
