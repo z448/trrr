@@ -126,7 +126,5 @@ sub clipboard {
     }
 }
 
-use v5.10;
-say clipboard( $ARGV[0] );
 
 1;
