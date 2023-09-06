@@ -87,11 +87,12 @@ sub clipboard {
         my @tool = @{ $tool{$os}->{write} };
         for (@tool) {
             if ( dep($_) ) {
-                system("echo '$in' | $_");
-                return $in;
+                return $in unless system("echo '$in' | $_");
+
             }
             else {
                 if ( $tool[$#tool] eq $_ ){    # if not even last one of tools is installed
+                    print "\n$in\n"; # print magnet link
                     for ( @{ $tool{$os}->{write} } ) { s/^(.+?) .+/$1/ }
                     print "For magnet link to be placed into clipboard install " . join( ' or ', @{ $tool{$os}->{write} } ) . ". ";
                     print "It can be found in com.ericasadun.utilities packege." if $os eq 'ios';
