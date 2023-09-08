@@ -8,7 +8,7 @@ App::Trrr::LME
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( lme );
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use strict;
 use warnings;
@@ -27,8 +27,14 @@ sub lme {
         return magnet($response);
     }
 
-    #my $site_string = ''; #<---don't know site string yet, site is not working
-    my @domain = ('www.limetorrents.to');
+    my $site_string = '/seeds/';
+    my @domain = (  
+                    'limetorrents.unblockit.esq',
+                    'www.limetorrents.to',
+                    'www.limetorrents.lol',
+                    'www.limetorrentx.cc',
+                    'limetorrents.proxybit.pics',
+    );
 
     my $url;
     for my $domain (@domain) {
@@ -47,13 +53,10 @@ sub lme {
         }
         close $ph;
 
-=head1
-# Uncomment this head/cut when you know site string
         unless($response =~ /$site_string/){
             die "Could not connect to any of following domains:\n" . join("\n", @domain) if $domain eq $domain[$#domain];
             next;
         }
-=cut
 
         return results( $response, $domain );
     }
