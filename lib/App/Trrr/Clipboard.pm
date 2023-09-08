@@ -2,9 +2,10 @@ package App::Trrr::Clipboard;
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( clipboard );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
+use warnings;
 
 my %tool = (
     linux => {
@@ -19,7 +20,11 @@ my %tool = (
         read  => ['pbpaste'],
         write => ['pbcopy']
     },
-    msys => {    # could be also 'MSWin32' ? <---
+    msys => {
+        read  => ['/dev/clipboard'],
+        write => ['/dev/clipboard']
+    },
+    MSWin32 => {
         read  => ['/dev/clipboard'],
         write => ['/dev/clipboard']
     }
@@ -57,45 +62,83 @@ sub clipboard {
             my @pb_dir_dir_file = grep { -f "$pb_dir/$pb_dir_dir/$_" } readdir($pb_dir_dir_dh);
             closedir $pb_dir_dir_dh;
 
+
+            my $file38_count = 0;
+            my @file38       = ();
+            my $file38       = '';
             for my $file (@pb_dir_dir_file) {
-                next if -s "$pb_dir/$pb_dir_dir/$file" == 38;
+                if ( -s "$pb_dir/$pb_dir_dir/$file" == 38 ) {
+                    $file38_count++;
+                    push @file38, $file;
+                }
+            }
+
+            if ( $file38_count > 1 ) {
+                for my $file (@file38) {
+                    open( my $fh, '<', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for reading $pb_dir/$pb_dir_dir/$file: $!";
+                    while (<$fh>) {
+                        $file38 = $file if /^iOS rich content paste pasteboard type$/;
+                    }
+                    close $fh;
+                }
+            }
+            elsif ( $file38_count == 1 ) {
+                $file38 = $file38[0];
+            }
+
+            my $i = 0;
+            for my $file (@pb_dir_dir_file) {
+                delete $pb_dir_dir_file[$i] if $file eq $file38;
+                $i++;
+            }
+            @pb_dir_dir_file = grep { defined } @pb_dir_dir_file;
+
+
+            for my $file (@pb_dir_dir_file) {
                 open( my $ph, '-|', 'file', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open 'file' pipe to file $pb_dir/$pb_dir_dir/$file: $!";
                 while (<$ph>) {
-                    next unless /text, with no line terminators$/;
+                    next unless /: (ASCII|UTF-8 Unicode) text, with no line terminators$/ || /: (ASCII|UTF-8 Unicode) text$/;
 
                     if ($in) {
                         open( my $fh, '>', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for writing $pb_dir/$pb_dir_dir/$file: $!";
                         print $fh $in;
                         close $fh;
-                        return "'" . $in . "' has been placed into pasteboard";
+                        return $in;
                     }
                     else {
+                        my $content = '';
                         open( my $fh, '<', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for reading $pb_dir/$pb_dir_dir/$file: $!";
                         while (<$fh>) {
-                            return $_;
+                            $content = $content . $_;
                         }
                         close $fh;
+                        return $content;
                     }
                 }
                 close $ph;
             }
         }
-        else { $in = "$in   " if $os eq 'ios' } # if it's iOS and com.apple.Pasteboard dir doesn't exist prepare $in for iOS pbcopy and continue below
+        else {
+            $in = "$in   " if defined $in;
+        } 
     }
 
     if ($in) {
         my @tool = @{ $tool{$os}->{write} };
-        for (@tool) {
-            if ( dep($_) ) {
-                return $in unless system("echo '$in' | $_");
-
+        for my $tool(@tool) {
+            if ( dep($tool) ) {
+                if ( system("echo '$in' | $tool") ) {
+                    return 0;
+                }
+                else { return $in }
             }
             else {
-                if ( $tool[$#tool] eq $_ ){    # if not even last one of tools is installed
-                    print "\n$in\n"; # print magnet link
+                if ( $tool[$#tool] eq $tool ) { 
                     for ( @{ $tool{$os}->{write} } ) { s/^(.+?) .+/$1/ }
-                    print "For magnet link to be placed into clipboard install " . join( ' or ', @{ $tool{$os}->{write} } ) . ". ";
+                    print "Can't write content into clipboard. To do that install " . join( ' or ', @{ $tool{$os}->{write} } ) . ". ";
                     print "It can be found in com.ericasadun.utilities packege." if $os eq 'ios';
+                    print "\n";
+                    return 0;
                 }
             }
         }
@@ -105,22 +148,20 @@ sub clipboard {
         for my $tool (@tool) {
             if ( dep($tool) ) {
                 my $content = '';
-                open( my $ph, '-|', $tool );
+                open( my $ph, '-|', $tool ) || die "Can't open pipe to $tool: $!";
                 while (<$ph>) {
-                    chomp;
                     $content = $content . ' ' . $_;
                 }
                 close $ph;
-                $content =~ s/\n/ /g;
-                $content =~ s/^ //;
-
                 return $content;
             }
             else {
                 if ( $tool[$#tool] eq $tool ) {
                     for ( @{ $tool{$os}->{read} } ) { s/^(.+?) .+/$1/ }
-                    print "To use clipboard content as search keywords install " . join( ' or ', @{ $tool{$os}->{read} } ) . ". ";
+                    print "Can't read clipboard content. To do that install " . join( ' or ', @{ $tool{$os}->{read} } ) . ". ";
                     print "It can be found in com.ericasadun.utilities packege." if $os eq 'ios';
+                    print "\n";
+                    return 0;
                 }
             }
         }

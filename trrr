@@ -25,7 +25,11 @@ our $VERSION = '0.16';
 
 my @keyword = ();
 if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L|[a-o]|\d+)$/) ){
-    push @keyword, split(/\s+/, clipboard());
+    my $clipboard = clipboard();
+    $clipboard =~ s/\n/ /g;
+    $clipboard =~ s/^ //;
+    $clipboard =~ s/\s+$//;
+    push @keyword, split(/\s+/, $clipboard);
 }
 
 
@@ -85,12 +89,10 @@ sub open_magnet{
     if($os eq 'MSWin32' or $os eq 'msys'){
         system("$magnet") and exit;
     } elsif( $os =~ /ios/){
-        #system("echo '$magnet   ' | pbcopy") and print "Magnet link has been placed into pasteboard\n";
-        #print "Can't place magnet link into pasteboard, 'pbcopy' tool is not installed\n" unless dep('pbcopy');
         if( clipboard($magnet) ){
             print "Magnet link has been placed into pasteboard\n";
         } else {
-            print "Magnet link:$magnet\n";
+            print "$magnet\n";
         }
     } elsif( $os =~ /(linux|darwin)/ ){
         print "Can't open magnet link, 'open' tool not installed.\n" and exit unless dep('open');
