@@ -29,7 +29,7 @@ sub yts {
         return magnet($response);
     }
 
-    my $site_string = 'year":';
+    my $site_string = '"message":"';
     my @domain      = ( 'yts.mx', 'yts.pm' );
 
     for my $domain (@domain) {
