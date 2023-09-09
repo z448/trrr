@@ -28,7 +28,8 @@ sub x137 {
         return magnet($response);
     }
 
-    my $site_string = 'seeds"';
+    my $debug = 1;
+    my $site_string = 'name="search" class="ui-autocomplete-input form-control"';
     my @domain      = (
         '1337x.to',
         '1337x.april1424.workers.dev',
@@ -265,9 +266,8 @@ sub x137 {
         close $ph;
 
         unless ( $response =~ /$site_string/ ) {
-            die "Could not connect to any of following domains:\n"
-              . join( "\n", @domain )
-              if $domain eq $domain[$#domain];
+            print "$domain has no \$site_string\n" if $debug; 
+            print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
         return results( $response, $domain );

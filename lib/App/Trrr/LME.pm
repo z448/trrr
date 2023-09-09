@@ -27,10 +27,11 @@ sub lme {
         return magnet($response);
     }
 
-    my $site_string = '/seeds/';
+    my $debug = 0;
+    my $site_string = 'type="text" class="searchfield" name="q"';
     my @domain = (  
-                    'limetorrents.unblockit.esq',
                     'www.limetorrents.to',
+                    'limetorrents.unblockit.esq',
                     'www.limetorrents.lol',
                     'www.limetorrentx.cc',
                     'limetorrents.proxybit.pics',
@@ -53,11 +54,11 @@ sub lme {
         }
         close $ph;
 
-        unless($response =~ /$site_string/){
-            die "Could not connect to any of following domains:\n" . join("\n", @domain) if $domain eq $domain[$#domain];
+        unless ( $response =~ /$site_string/ ) {
+            print "$domain has no \$site_string\n" if $debug; 
+            print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
-
         return results( $response, $domain );
     }
 }

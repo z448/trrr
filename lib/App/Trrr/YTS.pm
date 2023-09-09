@@ -29,6 +29,7 @@ sub yts {
         return magnet($response);
     }
 
+    my $debug = 0;
     my $site_string = '"message":"';
     my @domain      = ( 'yts.mx', 'yts.pm' );
 
@@ -48,9 +49,8 @@ sub yts {
         close $ph;
 
         unless ( $response =~ /$site_string/ ) {
-            die "Could not connect to any of following domains:\n"
-              . join( "\n", @domain )
-              if $domain eq $domain[$#domain];
+            print "$domain has no \$site_string\n" if $debug; 
+            print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
         return results( $response, $domain );

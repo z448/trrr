@@ -27,6 +27,7 @@ sub rbg {
         return magnet($response);
     }
 
+    my $debug = 0;
     my $site_string = '<table width="100%" class="lista2t">';
     my @domain      = (
         'rargb.to',          'rarbgget.org',
@@ -51,9 +52,8 @@ sub rbg {
         close $ph;
 
         unless ( $response =~ /$site_string/ ) {
-            die "could not connect to any of following domains:\n"
-              . join( "\n", @domain )
-              if $domain eq $domain[$#domain];
+            print "$domain has no \$site_string\n" if $debug; 
+            print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
         return results( $response, $domain );
