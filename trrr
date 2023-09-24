@@ -39,8 +39,8 @@ my $opt = {
 };
 
 for(@ARGV){
-    if(/^\-/){
-	    s/\-//;
+    if(/^\-(-help|help|[a-o]|\d+|P|R|Y|K|E|X|L)$/){
+        s/\-//;
         if(/^(-help|help)$/){ help() and exit }
         if(/^[a-o]$/){ $opt->{key} = $_ }
         if(/^\d+$/){ $opt->{seeds} = $_ } 
@@ -51,6 +51,8 @@ for(@ARGV){
         if(/^E$/){ $opt->{api} = "ext" }
         if(/^X$/){ $opt->{api} = "x137" }
         if(/^L$/){ $opt->{api} = "lme" }
+    } elsif(/^\-[A-Z]$/){
+        print "unknown option $_\n" and exit;
     } else { push @keyword, $_ }
 }
 
