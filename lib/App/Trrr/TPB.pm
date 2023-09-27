@@ -21,9 +21,12 @@ sub size {
     my $round = sub {
         my $size = shift;
         my @size = split( //, $size );
-
+        
         my $dotIdx = first { $size[$_] eq '.' } 0 .. $#size;
-
+        unless( $dotIdx ){ return $size };
+        unless( defined $size[ $dotIdx + 2 ]){ return $size };
+        unless( defined $size[ $dotIdx + 3 ]){ return $size };
+        
         if ( $size[ $dotIdx + 3 ] >= 5 ) {
             my $size = join( '', @size[ 0 .. $dotIdx + 2 ] );
             $size = $size + 0.01;
@@ -229,5 +232,6 @@ sub tpb {
         return results( $response, $domain );
     }
 }
+
 
 1;
