@@ -136,7 +136,7 @@ sub clipboard {
                 if ( $tool[$#tool] eq $tool ) { 
                     for ( @{ $tool{$os}->{write} } ) { s/^(.+?) .+/$1/ }
                     print "Can't write content into clipboard. To do that install " . join( ' or ', @{ $tool{$os}->{write} } ) . ". ";
-                    print "It can be found in com.ericasadun.utilities packege." if $os eq 'ios';
+                    print "It can be found in com.ericasadun.utilities package." if $os eq 'ios';
                     print "\n";
                     return 0;
                 }
@@ -159,7 +159,7 @@ sub clipboard {
                 if ( $tool[$#tool] eq $tool ) {
                     for ( @{ $tool{$os}->{read} } ) { s/^(.+?) .+/$1/ }
                     print "Can't read clipboard content. To do that install " . join( ' or ', @{ $tool{$os}->{read} } ) . ". ";
-                    print "It can be found in com.ericasadun.utilities packege." if $os eq 'ios';
+                    print "It can be found in com.ericasadun.utilities package." if $os eq 'ios';
                     print "\n";
                     return 0;
                 }
