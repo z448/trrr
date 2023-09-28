@@ -24,7 +24,7 @@ our $VERSION = '0.16';
 
 
 my @keyword = ();
-if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L|[a-o]|\d+)$/) ){
+if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L|[a-o])$/) ){
     my $clipboard = clipboard();
     $clipboard =~ s/\n/ /g;
     $clipboard =~ s/^ //;
@@ -39,11 +39,10 @@ my $opt = {
 };
 
 for(@ARGV){
-    if(/^\-(-help|help|[a-o]|\d+|P|R|Y|K|E|X|L)$/){
+    if(/^\-(-help|help|[a-o]|P|R|Y|K|E|X|L)$/){
         s/\-//;
         if(/^(-help|help)$/){ help() and exit }
         if(/^[a-o]$/){ $opt->{key} = $_ }
-        if(/^\d+$/){ $opt->{seeds} = $_ } 
         if(/^P$/){ $opt->{api} = "tpb" }
         if(/^R$/){ $opt->{api} = "rbg" }
         if(/^Y$/){ $opt->{api} = "yts" }
@@ -185,7 +184,6 @@ Options:
        "-X" 1337x
        "-L" limetorrents
        
-       "-100" limit results to those that have as least 100 seeders
        "-b" automaticaly open second (B) magnet link from results
        "perldoc trrr" read more
 END_HELP
@@ -234,14 +232,6 @@ C<-L> limetorrents
 =over 10
 
 C<trrr>
-
-=back
-
-- Limit results which have at least 100 seeders:
-
-=over 10
-
-C<trrr keyword1 keyword2 keywordN -100>
 
 =back
 
