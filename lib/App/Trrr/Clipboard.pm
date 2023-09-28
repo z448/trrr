@@ -2,7 +2,7 @@ package App::Trrr::Clipboard;
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( clipboard );
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use strict;
 use warnings;
@@ -101,7 +101,7 @@ sub clipboard {
 
                     if ($in) {
                         open( my $fh, '>', "$pb_dir/$pb_dir_dir/$file" ) || die "Can't open file for writing $pb_dir/$pb_dir_dir/$file: $!";
-                        print $fh $in;
+                        print $fh "$in";
                         close $fh;
                         return $in;
                     }

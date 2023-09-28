@@ -20,11 +20,11 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 
 my @keyword = ();
-if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(P|R|Y|K|E|X|L|[a-o])$/) ){
+if( scalar @ARGV == 0 or (scalar @ARGV == 1 and $ARGV[0] =~ /^-(p|r|y|k|e|x|l|[A-O])$/) ){
     my $clipboard = clipboard();
     $clipboard =~ s/\n/ /g;
     $clipboard =~ s/^ //;
@@ -39,18 +39,18 @@ my $opt = {
 };
 
 for(@ARGV){
-    if(/^\-(-help|help|[a-o]|P|R|Y|K|E|X|L)$/){
+    if(/^\-(-help|help|[A-O]|p|r|y|k|e|x|l)$/){
         s/\-//;
         if(/^(-help|help)$/){ help() and exit }
-        if(/^[a-o]$/){ $opt->{key} = $_ }
-        if(/^P$/){ $opt->{api} = "tpb" }
-        if(/^R$/){ $opt->{api} = "rbg" }
-        if(/^Y$/){ $opt->{api} = "yts" }
-        if(/^K$/){ $opt->{api} = "kat" }
-        if(/^E$/){ $opt->{api} = "ext" }
-        if(/^X$/){ $opt->{api} = "x137" }
-        if(/^L$/){ $opt->{api} = "lme" }
-    } elsif(/^\-[A-Z]$/){
+        if(/^[A-O]$/){ $opt->{key} = $_ }
+        if(/^p$/){ $opt->{api} = "tpb" }
+        if(/^r$/){ $opt->{api} = "rbg" }
+        if(/^y$/){ $opt->{api} = "yts" }
+        if(/^k$/){ $opt->{api} = "kat" }
+        if(/^e$/){ $opt->{api} = "ext" }
+        if(/^x$/){ $opt->{api} = "x137" }
+        if(/^l$/){ $opt->{api} = "lme" }
+    } elsif(/^\-[a-z]$/){
         print "unknown option $_\n" and exit;
     } else { push @keyword, $_ }
 }
@@ -97,7 +97,7 @@ sub open_magnet{
         }
     } elsif( $os =~ /(linux|darwin)/ ){
         print "Can't open magnet link, 'open' tool not installed.\n" and exit unless dep('open');
-        system("open '$magnet'");  
+        system(qq(open "$magnet"));  
     }
 }
 
@@ -141,13 +141,11 @@ sub wait_key {
     my $result = shift;
 
     if( $opt->{key} ){
-	get_torrent($result) and exit;
+	    get_torrent($result) and exit;
     } else {
-
         if( $^O eq 'MSWin32' or $^O eq 'msys' ){ 
             print "To pick from results repeat search and add -[key] (e.g. -a)\n" and exit;
         }
-	
         print colored(['blink'],'^') . ' ' . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY') . "\n";
         require App::Trrr::HotKey;
         App::Trrr::HotKey->import( 'readkey' ) ;
@@ -159,12 +157,12 @@ sub wait_key {
 sub get_torrent {
     no strict "refs";
     my $result = shift;
-    my( $picked ) = grep { $_->{key} eq uc $opt->{key} } @$result;
+    my( $picked ) = grep { $_->{key} eq $opt->{key} } @$result;
 
     if( $picked->{magnet} ){
-	open_magnet("$picked->{magnet}") if $opt->{key} =~ /[a-o]/;
+	    open_magnet("$picked->{magnet}") if $opt->{key} =~ /[A-O]/;
     } else { 
-        open_magnet( $picked->{api}("$picked->{link}") ) if $opt->{key} =~ /[a-o]/;
+        open_magnet( $picked->{api}("$picked->{link}") ) if $opt->{key} =~ /[A-O]/;
     }
 }
 
@@ -175,16 +173,16 @@ trrr - search torrents
 
 E.g:
        "trrr keyword1 keyword2" search for keywords on piratebay
-       "trrr keyword1 keyword2 -R" search for keywords on rarbg 
+       "trrr keyword1 keyword2 -r" search for keywords on rarbg 
 Options: 
-       "-R" rarbg
-       "-Y" yts
-       "-K" kickasstorrents
-       "-E" extratorrents
-       "-X" 1337x
-       "-L" limetorrents
+       "-r" rarbg
+       "-y" yts
+       "-k" kickasstorrents
+       "-e" extratorrents
+       "-x" 1337x
+       "-l" limetorrents
        
-       "-b" automaticaly open second (B) magnet link from results
+       "-B" automaticaly open 'B' magnet link from results
        "perldoc trrr" read more
 END_HELP
 
@@ -213,21 +211,21 @@ C<trrr keyword1 keyword2 keywordN>
 
 =over 10
 
-C<-R> rarbg
+C<-r> rarbg
 
-C<-Y> yts
+C<-y> yts
 
-C<-K> kickasstorrents
+C<-k> kickasstorrents
 
-C<-E> extratorrents
+C<-e> extratorrents
 
-C<-X> 1337x
+C<-x> 1337x
 
-C<-L> limetorrents
+C<-l> limetorrents
 
 =back
 
-- On Linux, start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed )
+- start it without any parameter and it'll use clipboard content as keywords. ( this needs 'xclip' or 'xsel' to be installed on Linux )
 
 =over 10
 
@@ -235,15 +233,16 @@ C<trrr>
 
 =back
 
-- To automaticaly open some magnet link from results add its key -[a-o] as an option. So to open first magnet link use following command.
+- To automaticaly open some magnet link from results add its key -[A-O] as an option. 
+  E.g: to open first (A) magnet link use following command.
 
 =over 10
 
-C<trrr keyword1 keyword2 keywordN -a>
+C<trrr keyword1 keyword2 keywordN -A>
 
 =back
 
-On Windows running 'Git/Bash for Windows' you have to specify key upfront so first make search without any option to see the results, then repeat the command and add key -[a-o] as anoption. 
+On Windows running 'Git/Bash for Windows' you have to specify key upfront so first make search without any option to see the results, then repeat the command and add key -[A-O] as an option. 
 
 - See help
 
