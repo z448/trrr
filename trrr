@@ -20,7 +20,7 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 
 my @keyword = ();
@@ -39,9 +39,10 @@ my $opt = {
 };
 
 for(@ARGV){
-    if(/^\-(-help|help|[A-O]|p|r|y|k|e|x|l)$/){
+    if(/^\-(-help|help|[A-O]|v|p|r|y|k|e|x|l)$/){
         s/\-//;
         if(/^(-help|help)$/){ help() and exit }
+        if(/^(v)$/){ print "$VERSION\n" and exit }
         if(/^[A-O]$/){ $opt->{key} = $_ }
         if(/^p$/){ $opt->{api} = "tpb" }
         if(/^r$/){ $opt->{api} = "rbg" }
@@ -182,7 +183,7 @@ Options:
        "-x" 1337x
        "-l" limetorrents
        
-       "-B" automaticaly open 'B' magnet link from results
+       "-A" open first (A) magnet link from results without waiting for key press
        "perldoc trrr" read more
 END_HELP
 
