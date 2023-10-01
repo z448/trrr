@@ -55,8 +55,16 @@ sub clipboard {
         my $pb_dir = '/private/var/mobile/Library/Caches/com.apple.Pasteboard';
         if ( -e $pb_dir ) {
             opendir( my $pb_dir_dh, $pb_dir ) || die "Can't opendir $pb_dir: $!";
-            my ($pb_dir_dir) = grep { !/^\./ && !/^\.\.$/ && -d "$pb_dir/$_" } readdir($pb_dir_dh);
+            my @pb_dir_dir = grep { !/^\./ && !/^\.\.$/ && -d "$pb_dir/$_" } readdir($pb_dir_dh);
             closedir $pb_dir_dh;
+
+            my $pb_dir_dir = '';
+            for my $dir( @pb_dir_dir ){
+                opendir( my $pb_dir_dir_dh, "$pb_dir/$dir" ) || die "Can't opendir $dir: $!";
+                my @dir_content = grep { $_ } readdir($pb_dir_dir_dh);
+                $pb_dir_dir = $dir unless scalar @dir_content == 3; # if $dir contains just '.','..' and 'Manifest.plist' it's not correct $dir;
+                closedir $pb_dir_dir_dh;
+            }
 
             opendir( my $pb_dir_dir_dh, "$pb_dir/$pb_dir_dir" ) || die "Can't opendir $pb_dir/$pb_dir_dir: $!";
             my @pb_dir_dir_file = grep { -f "$pb_dir/$pb_dir_dir/$_" } readdir($pb_dir_dir_dh);
