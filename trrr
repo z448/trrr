@@ -150,7 +150,7 @@ sub wait_key {
         print colored(['blink'],'^') . ' ' . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY') . "\n";
         require App::Trrr::HotKey;
         App::Trrr::HotKey->import( 'readkey' ) ;
-        $opt->{key} = readkey();
+        $opt->{key} = uc readkey();
         get_torrent($result);
     }
 }
