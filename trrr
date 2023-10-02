@@ -20,7 +20,7 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 
 my @keyword = ();
@@ -39,9 +39,9 @@ my $opt = {
 };
 
 for(@ARGV){
-    if(/^\-(-help|help|[A-O]|v|p|r|y|k|e|x|l)$/){
+    if(/^\-(h|-help|help|[A-O]|v|p|r|y|k|e|x|l)$/){
         s/\-//;
-        if(/^(-help|help)$/){ help() and exit }
+        if(/^(h|-help|help)$/){ help() and exit }
         if(/^(v)$/){ print "$VERSION\n" and exit }
         if(/^[A-O]$/){ $opt->{key} = $_ }
         if(/^p$/){ $opt->{api} = "tpb" }
@@ -55,6 +55,7 @@ for(@ARGV){
         print "unknown option $_\n" and exit;
     } else { push @keyword, $_ }
 }
+for(@keyword){ s/\ /%20/g }
 
 
 my $term_width = 0; 
@@ -249,7 +250,7 @@ On Windows running 'Git/Bash for Windows' you have to specify key upfront so fir
 
 =over 10
 
-C<trrr -help>
+C<trrr -h>
 
 =back
 
