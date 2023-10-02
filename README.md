@@ -9,6 +9,7 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 # INSTALLATION
 
 ```bash
+cpan URL::Encode
 git clone https://github.com/z448/trrr
 cd trrr
 perl Makefile.PL
