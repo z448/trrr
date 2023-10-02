@@ -20,7 +20,7 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 
 my @keyword = ();
@@ -69,7 +69,7 @@ close $tput_ph;
 my $os = $^O;
 open(my $os_ph, '-|', 'uname', '-a');
 while(<$os_ph>){
-    $os = 'ios' if /iPhone/;
+    $os = 'ios' if /iPhone|iPad/;
 }
 close $os_ph;
 
