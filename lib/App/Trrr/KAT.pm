@@ -8,7 +8,7 @@ App::Trrr::KAT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( kat );
-our $VERSION = '0.03';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
@@ -16,10 +16,11 @@ use URL::Encode q(url_decode_utf8);
 
 sub kat {
     my $keywords = shift;
+    my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+
     if ( $keywords =~ /\.html$/ ) {
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$keywords" )
-          || die "Cant't open 'curl $keywords' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }
@@ -31,10 +32,13 @@ sub kat {
     my $debug = 0;
     my $site_string = 'data-download title="Download';
     my @domain      = (
-        'kickasstorrents.to', 'kickasstorrent.cr',
-        'thekat.info',        'kat.am',
-        'kick4ss.com',        'katcr.to',
-        'kat.rip' 
+        'kat.rip',
+        'kick4ss.com',        
+        'thekat.info',        
+        'katcr.to',
+        'kickasstorrents.to',
+        'kickasstorrent.cr',
+        'kat.am',
     );
 
     my $url;
@@ -59,8 +63,7 @@ sub kat {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$url" )
-          || die "Cant't open 'curl $url' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }
@@ -152,7 +155,9 @@ sub results {
             if ( /magnet link" href="(.+?)"/ and $in_table ) {
                 $t{magnet} = $1;
                 $t{magnet} =~ s/https.+magnet/magnet/;
+                #print "\$t{magnet} before decode is:$t{magnet}\n";###
                 $t{magnet} = url_decode_utf8( $t{magnet} );
+                #print "\$t{magnet} after decode is:$t{magnet}\n";###
             }
 
             if ( /class="cellMainLink">(.+?)<\/a>$/ and $in_table ) {

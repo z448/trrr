@@ -8,7 +8,7 @@ App::Trrr::TPB - TPB API
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( tpb );
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;
@@ -188,6 +188,7 @@ sub tpb {
 
     my $debug = 0;
     my $site_string = 'eeders"';
+    my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
     my @domain      = (
         'apibay.org',              'pirateproxy.live',
         'thepiratebay.zone',       'pirate-proxy.ink',
@@ -217,8 +218,7 @@ sub tpb {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$url" )
-          || die "Can't open 'curl $url' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }

@@ -8,17 +8,18 @@ App::Trrr::RBG
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( rbg );
-our $VERSION = '0.02';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;
 
 sub rbg {
     my $keywords = shift;
+    my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
+
     if ( $keywords =~ /\.html$/ ) {
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$keywords" )
-          || die "Can't open 'curl $keywords' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }
@@ -44,8 +45,7 @@ sub rbg {
           . '&order=seeders&by=DESC';
 
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$url" )
-          || die "Can't open 'curl $url' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }

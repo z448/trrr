@@ -8,7 +8,7 @@ App::Trrr::EXT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( ext );
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use strict;
 use warnings;
@@ -20,6 +20,7 @@ sub ext {
     my $debug = 0;
     my $site_string = 'seeds">S';
     my $url;
+    my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
     for my $domain (@domain) {
         if ( $domain =~ /^extratorrents\.it$/ ) {
             $url =
@@ -41,8 +42,7 @@ sub ext {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', '-s', "$url" )
-          || die "Cant't open 'curl $url' pipe: $!";
+        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
         while (<$ph>) {
             $response = $response . $_;
         }
