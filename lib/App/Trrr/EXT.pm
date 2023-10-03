@@ -8,13 +8,14 @@ App::Trrr::EXT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( ext );
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;
 
 sub ext {
     my $keywords = shift;
+    my $cacert = "$ENV{HOME}/cacert.pem" if -f "$ENV{HOME}/cacert.pem";
     my @domain   = ( 'extratorrents.it', 'extratorrent.st' );
 
     my $debug = 0;
@@ -42,7 +43,12 @@ sub ext {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        my $ph;
+        if($cacert){
+            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        } else {
+            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        }   
         while (<$ph>) {
             $response = $response . $_;
         }

@@ -8,7 +8,7 @@ App::Trrr::X137
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( x137 );
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;
@@ -16,11 +16,17 @@ use Time::HiRes qw(gettimeofday);
 
 sub x137 {
     my $keywords = shift;
+    my $cacert = "$ENV{HOME}/cacert.pem" if -f "$ENV{HOME}/cacert.pem";
     my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
     if ( $keywords =~ /^https:.+\/$/ ) {
         my $response = '';
-        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
+        my $ph;
+        if($cacert){
+            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
+        } else {
+            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
+        }   
         while (<$ph>) {
             $response = $response . $_;
         }
@@ -259,7 +265,12 @@ sub x137 {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        my $ph;
+        if($cacert){
+            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        } else {
+            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        }   
         while (<$ph>) {
             $response = $response . $_;
         }

@@ -8,12 +8,14 @@ App::Trrr::TPB - TPB API
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( tpb );
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
 use JSON::PP;
 use List::Util qw(first);
+
+
 
 sub size {
     my $bytes = shift;
@@ -185,7 +187,7 @@ sub results {
 
 sub tpb {
     my $keywords = shift;
-
+    my $cacert = "$ENV{HOME}/cacert.pem" if -f "$ENV{HOME}/cacert.pem";
     my $debug = 0;
     my $site_string = 'eeders"';
     my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
@@ -218,7 +220,12 @@ sub tpb {
         }
 
         my $response = '';
-        open( my $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        my $ph;
+        if($cacert){
+            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        } else {
+            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
+        }   
         while (<$ph>) {
             $response = $response . $_;
         }
