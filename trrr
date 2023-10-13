@@ -3,12 +3,6 @@
 use strict;
 use warnings;
 
-=head1 NAME
-
-trrr - search torrents 
-
-=cut
-
 use Term::ANSIColor;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
@@ -20,9 +14,7 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 binmode(STDOUT, ":encoding(UTF-8)"); # https://stackoverflow.com/a/47940728
 
-
-
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 
 my @keyword = ();
@@ -39,6 +31,29 @@ my $opt = {
     seeds   =>  1,
     api     =>  "tpb"
 };
+
+if( -f "$ENV{HOME}/.trrr" ){
+    open my $conf, '<', "$ENV{HOME}/.trrr";
+    while(<$conf>){
+        chomp;
+        next if /(#|^$)/;
+        next unless /:/;
+        my( $field, $value ) = split /:\s*/, $_;
+        $field =~ s/source/api/;
+        if($field eq 'api'){
+            print "unrecognized source '$value'\n" and exit unless $value =~ /^(tpb|rbg|yts|kat|ext|x137|lme)$/;
+        }
+        $opt->{$field} = $value if $field =~ /^(seeds|api)$/;
+    }
+    close $conf;
+}
+else {
+    open my $conf, '>', "$ENV{HOME}/.trrr";
+    print $conf "# minimum number of seeds the results shoud contain\nseeds: $opt->{seeds}\n\n"; 
+    print $conf "# source which sould be used when no option is passed to trrr: recognized options are: tpb(piratebay), rbg(rarbg), yts, kat(kickasstorrents), ext(extratorrents, x137(1337x), lme(limetorrents)\nsource: $opt->{api}\n\n"; 
+    close $conf;
+}
+
 
 for(@ARGV){
     if(/^\-(h|-help|help|[A-O]|v|p|r|y|k|e|x|l)$/){
@@ -179,6 +194,7 @@ E.g:
        "trrr keyword1 keyword2" search for keywords on piratebay
        "trrr keyword1 keyword2 -r" search for keywords on rarbg 
 Options: 
+       "-p" piratebay
        "-r" rarbg
        "-y" yts
        "-k" kickasstorrents
@@ -196,6 +212,13 @@ END_HELP
 
 show();
 
+=head1 NAME
+
+trrr - search torrents 
+
+=head1 VERSION
+
+This document describes trrr version 0.21
 
 =head1 DESCRIPTION
     
@@ -203,7 +226,7 @@ Tool for searching torrents. Results are sorted by number of seeders and each is
 
 =head1 USAGE
     
-- Search with as many keywords as needed. Uses piratebay by default.
+- Search with as many keywords as needed.
 
 =over 10
 
@@ -211,9 +234,11 @@ C<trrr keyword1 keyword2 keywordN>
 
 =back
 
-- To use different torrent source add one of the following options. 
+- trrr uses source option from '~/.trrr' conf. To use different torrent source add one of the following options. 
 
 =over 10
+
+C<-p> piratebay
 
 C<-r> rarbg
 
