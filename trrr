@@ -130,7 +130,7 @@ sub show {
 
     unless(@result){ print colored(['yellow'], 'no results') . "\n" and exit }
     
-    print colored(['grey5 on_white'], '  ') . colored(['black on_white'], $result[0]->{source}) . colored(['grey5 on_grey15'], ' ') . colored(['grey5 on_grey10'], ' ') . colored(['grey5 on_grey5'], ' ') . colored(['grey5 on_grey2'], ' ') ."\n";
+    print colored(['grey5 on_white'], '  ') . colored(['black on_white'], $result[0]->{source}) . colored(['grey5 on_grey15'], ' ') . colored(['grey5 on_grey10'], ' ') . colored(['grey5 on_grey5'], ' ') ."\n";
 
     my $key = 'A';
     my( $key_color ) = ();
@@ -167,8 +167,10 @@ sub wait_key {
         if( $^O eq 'MSWin32' or $^O eq 'msys' ){ 
             print "To pick from results repeat search and add -[key] (e.g. -a)\n" and exit;
         }
-        print colored(['blink'],'^') . "\n";
+        print colored(['blink'],'^');
         #print colored(['blink'],'^') . ' ' . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY') . "\n";
+        print colored(['black on_grey3'],' ') . colored(['grey5 on_grey15'],'P') . colored(['grey15 on_grey5'],'RESS') . colored(['grey5 on_grey15'],'K') . colored(['grey15 on_grey5'],'EY') . colored(['grey5 on_grey5'],' ') . colored(['grey5 on_grey3'],' ') . colored(['grey5 on_grey1'],' ') . "\n";
+        #print colored(['blink'],'^') . "\n";
 
         require App::Trrr::HotKey;
         App::Trrr::HotKey->import( 'readkey' ) ;
