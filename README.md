@@ -9,7 +9,10 @@ CLI tool to search torrents. Results are sorted by number of seeders and each is
 # INSTALLATION
 
 ```bash
+# install dependencies
 cpan URL::Encode
+apt-get install curl
+# clone, build and install
 git clone https://github.com/z448/trrr
 cd trrr
 perl Makefile.PL
@@ -23,7 +26,7 @@ Search with as many parameters as needed.
 
 > `trrr keyword1 keyword2 keywordN`
 
-On Linux, start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed )
+Start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed on Linux )
 
 > `trrr`
 
