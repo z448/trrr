@@ -83,6 +83,7 @@ sub results {
 
         if ( / href="(.+)?" title="(.+)?"/ and $in_table == 1 ) {
             $t{api}    = 'rbg';
+            $t{source}    = 'rarbg';
             $t{domain} = $domain;
             $t{link}   = $1;
             $t{link}   = 'https://' . $domain . $t{link};

@@ -110,6 +110,7 @@ sub results {
 
             if ( /<a href="(\/.+?)".+filmType">/ and $in_table ) {
                 $t{api}    = 'kat';
+                $t{source}    = 'kickasstorrents';
                 $t{domain} = $domain;
                 $t{link}   = $1;
                 $t{link}   = 'https://' . $domain . $t{link};
@@ -173,6 +174,7 @@ sub results {
 
             if ( /class="cellMainLink">(.+?)<\/a>$/ and $in_table ) {
                 $t{api}      = 'kat';
+                $t{source}    = 'kickasstorrents';
                 $t{title}    = $1;
                 $t{uploader} = '?';
             }

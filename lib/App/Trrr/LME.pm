@@ -91,6 +91,7 @@ sub results {
                   )
                 {
                     $t{api}      = 'lme';
+                    $t{source}      = 'limetorrents';
                     $t{domain}   = $domain;
                     $t{link}     = 'https://' . $t{domain} . $1;
                     $t{title}    = $2;

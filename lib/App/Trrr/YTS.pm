@@ -75,6 +75,7 @@ sub results {
     my ( @item, %t ) = ();
     for ( @{ $content->{data} } ) {
         $t{api}      = 'yts';
+        $t{source}      = 'yts';
         $t{domain}   = $domain;
         $t{link}     = $_->{url};
         $t{link}     = 'https:' . $t{link} if $domain eq 'yts.pm';

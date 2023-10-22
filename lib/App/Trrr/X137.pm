@@ -387,6 +387,7 @@ sub results {
                 and $in{table} )
             {
                 $t{api}      = 'x137';
+                $t{source}      = '1337x';
                 $t{domain}   = $domain;
                 $t{category} = $category{"$1"};
                 $t{link}     = 'https://' . $t{domain} . $2;
@@ -399,6 +400,7 @@ sub results {
                 and $in{table} )
             {
                 $t{api}      = 'x137';
+                $t{source}      = '1337x';
                 $t{domain}   = $domain;
                 $t{category} = $category{"$1"};
                 $t{link}     = 'https://' . $2;

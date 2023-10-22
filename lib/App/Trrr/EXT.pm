@@ -81,6 +81,7 @@ sub results {
         if (/^<img src="\/.+?\.html" title="view (.+?) torrent"/) {
             $t{title} = $1;
             $t{api}   = 'ext';
+            $t{source}   = 'extratorrents';
         }
 
         if ( /^<a href="\/category.+?title="Browse (.+?)"><img/ and $in{table} )

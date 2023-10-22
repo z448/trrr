@@ -117,7 +117,9 @@ sub results {
         while (<$fh>) {
             for (@$content) {
                 $t{title} = $_->{name};
+                #$t{title} =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
                 $t{api}   = 'tpb';
+                $t{source} = 'piratebay';
 
                 $t{magnet} =
                   "magnet:?xt=urn:btih:" . $_->{info_hash} . "&dn=" . $t{title};
@@ -150,6 +152,7 @@ sub results {
             if ( /^<div class="detName">.+>(.+?)<\/a>\r/ and $in{table} ) {
                 $t{title} = $1;
                 $t{api}   = 'tpb';
+                $t{source} = 'piratebay';
             }
 
             if (
