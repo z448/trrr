@@ -49,8 +49,8 @@ if( -f "$ENV{HOME}/.trrr" ){
 }
 else {
     open my $conf, '>', "$ENV{HOME}/.trrr";
-    print $conf "# minimum number of seeds the results shoud contain\nseeds: $opt->{seeds}\n\n"; 
-    print $conf "# source which sould be used when no option is passed to trrr: recognized options are: tpb(piratebay), rbg(rarbg), yts, kat(kickasstorrents), ext(extratorrents, x137(1337x), lme(limetorrents)\nsource: $opt->{api}\n\n"; 
+    print $conf "# minimum number of seeds the results should contain\nseeds: $opt->{seeds}\n\n"; 
+    print $conf "# source which should be used when no option is passed to trrr: recognized options are: tpb(piratebay), rbg(rarbg), yts, kat(kickasstorrents), ext(extratorrents, x137(1337x), lme(limetorrents)\nsource: $opt->{api}\n\n"; 
     close $conf;
 }
 
