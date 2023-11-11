@@ -117,8 +117,9 @@ sub results {
         while (<$fh>) {
             for (@$content) {
                 $t{title} = $_->{name};
-                #$t{title} =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+                $t{title} =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
                 return 0 if $t{title} =~ /No results returned/;
+
                 $t{api}   = 'tpb';
                 $t{source} = 'piratebay';
 
