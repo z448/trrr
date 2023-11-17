@@ -8,7 +8,7 @@ App::Trrr::RBG
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( rbg );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
 use warnings;
@@ -34,12 +34,14 @@ sub rbg {
         return magnet($response);
     }
 
-    my $debug = 0;
-    my $site_string = '<table width="100%" class="lista2t">';
+    my $debug = 1;
+    my $site_string = '<table width="100%"';
     my @domain      = (
-        'rargb.to',          'rarbgget.org',
-        'www.rarbgproxy.to', 'www2.rarbggo.to',
-        'rarbg.unblockninja.com'
+        'www.rarbgproxy.to',
+        'rarbgget.org', # connection timeout
+        # 'rargb.to', # registration url instead of magnet link
+        # 'www2.rarbggo.to', # blank .http site
+        # 'rarbg.unblockninja.com' # verify you are human site
     );
 
     for my $domain (@domain) {
@@ -62,6 +64,7 @@ sub rbg {
         }
         close $ph;
 
+
         unless ( $response =~ /$site_string/ ) {
             print "$domain has no \$site_string\n" if $debug; 
             print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
@@ -78,10 +81,10 @@ sub results {
     my ( @item, %t ) = ();
     open( my $fh, '<', \$content ) || die "Can't open \$content: $!";
     while (<$fh>) {
-        $in_table = 1 if /table.+lista2t/;
+        $in_table = 1 if /table.+tablelist2/;
         $in_table = 0 if /<\/table>/;
 
-        if ( / href="(.+)?" title="(.+)?"/ and $in_table == 1 ) {
+        if ( / href="(.+)?" title="(.+) torrent"/ and $in_table == 1 ) {
             $t{api}    = 'rbg';
             $t{source}    = 'rarbg';
             $t{domain} = $domain;
@@ -106,18 +109,20 @@ sub results {
 
         if (/"50px.+color.+?>(\d+)</) {
             $t{seeds} = $1;
+            push @item, {%t};
         }
 
-        if (/"50px.+lista">(\d+)</) {
+        if (/"50px.+lista" align="center">(\d+)<\/td>/) {
             $t{leechs} = $1;
         }
 
-        if (/<td align="center" class="lista">(.*)<\/td>\r/) {
+        if (/<td class="tlista" align="center">(.*)<\/td>/) {
             $t{uploader} = $1;
             push @item, {%t};
         }
     }
     close $fh;
+
     return \@item;
 }
 
