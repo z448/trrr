@@ -151,7 +151,7 @@ sub show {
         if($_->{api} eq 'yts'){
 		    print colored([$key_color], $key) . ' ' .  colored( ['yellow'], $_->{title} ) . ' ' . colored(['yellow'], $_->{year}) . ' ' . colored(['grey8'], $_->{category}) . "\n";
 	    } else {
-		    print colored([$key_color], $key) . ' ' . colored(['cyan'], $_->{seeds}) . ' ' .  colored(['yellow'], $_->{title} ) . ' ' . colored(['grey8'], $_->{category}) . ' ' . colored(['bold'], $_->{size}) . "\n";
+            print colored([$key_color], $key) . ' ' . colored(['cyan'], $_->{seeds}) . ' ' .  colored(['yellow'], $_->{title} ) . ' ' . colored(['grey8'], $_->{category}) . ' ' . colored(['bold'], $_->{size}) . "\n";
 	    }
         $key++; $i++;
     }
@@ -168,7 +168,9 @@ sub wait_key {
             print "To pick from results repeat search and add -[key] (e.g. -a)\n" and exit;
         }
 
-        print colored(['blink'],'^');
+        # print colored(['blink'],'^'); # blinker
+        print ' ';
+        
         print ' ' . colored(['grey5 on_white'],'P') . colored(['white on_grey3'],'RESS') . colored(['grey5 on_white'],'K') . colored(['white on_grey3'],'EY') . colored(['white on_white'],'') . "\n";
 
         require App::Trrr::HotKey;
