@@ -28,12 +28,6 @@ Search with as many parameters as needed.
 
 Start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed on Linux )
 
-> `trrr`
-
-Limit results which have at least 100 seeders.
-
-> `trrr keyword1 keyword2 keywordN -100`
-
 To get another torrent from previous search add key as parameter. This is mandatory on Windows running 'Git/Bash for Windows' where you have to specify key on CLI upfront.
 
 > `trrr keyword1 keyword2 keywordN -b`
