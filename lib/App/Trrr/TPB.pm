@@ -14,6 +14,7 @@ use strict;
 use warnings;
 use JSON::PP;
 use List::Util qw(first);
+use URL::Encode qw< url_encode_utf8 >;
 
 
 
@@ -208,11 +209,18 @@ sub tpb {
     my $url;
     for my $domain (@domain) {
         if ( $domain =~ /^apibay\.org$/ ) {
+            
+            for(@$keywords){ s/%20/\ /g };
+            my @encoded_keywords = ();
+            for(@$keywords){
+                push @encoded_keywords, url_encode_utf8($_);
+            }
+            
             $url =
                 'https://'
               . $domain
               . '/q.php?q='
-              . join( '%20', @$keywords )
+              . join( '%20', @encoded_keywords )
               . '&cat=0';
         }
         else {
