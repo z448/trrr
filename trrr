@@ -5,14 +5,14 @@ use warnings;
 
 use URL::Encode qw< url_encode_utf8>;
 use Term::ANSIColor;
-use App::Trrr::KAT qw< kat >;
-use App::Trrr::TPB qw< tpb >;
-use App::Trrr::RBG qw< rbg >;
-use App::Trrr::YTS qw< yts >;
-use App::Trrr::EXT qw< ext >;
-use App::Trrr::X137 qw< x137 >;
-use App::Trrr::LME qw< lme >;
-use App::Trrr::Clipboard qw< clipboard >;
+use App::trrr::KAT qw< kat >;
+use App::trrr::TPB qw< tpb >;
+use App::trrr::RBG qw< rbg >;
+use App::trrr::YTS qw< yts >;
+use App::trrr::EXT qw< ext >;
+use App::trrr::X137 qw< x137 >;
+use App::trrr::LME qw< lme >;
+use App::trrr::Clipboard qw< clipboard >;
 binmode(STDOUT, ":encoding(UTF-8)"); # https://stackoverflow.com/a/47940728
 
 our $VERSION = '0.22';
@@ -171,8 +171,8 @@ sub wait_key {
 
         print '  ' . colored(['grey5 on_white'],'P') . colored(['white on_grey3'],'RESS') . colored(['grey5 on_white'],'K') . colored(['white on_grey3'],'EY') . colored(['white on_white'],'') . "\n";
 
-        require App::Trrr::HotKey;
-        App::Trrr::HotKey->import( 'readkey' ) ;
+        require App::trrr::HotKey;
+        App::trrr::HotKey->import( 'readkey' ) ;
         $opt->{key} = uc readkey();
         get_torrent($result);
     }
@@ -197,13 +197,11 @@ trrr - search torrents
 
 E.g:
        "trrr keyword1 keyword2" search for keywords on piratebay
-       "trrr keyword1 keyword2 -r" search for keywords on rarbg 
+       "trrr keyword1 keyword2 -k" search for keywords on kickasstorrents 
 Options: 
        "-p" piratebay
-       "-r" rarbg
        "-y" yts
        "-k" kickasstorrents
-       "-e" extratorrents
        "-x" 1337x
        "-l" limetorrents
        
@@ -245,13 +243,9 @@ C<trrr keyword1 keyword2 keywordN>
 
 C<-p> piratebay
 
-C<-r> rarbg
-
 C<-y> yts
 
 C<-k> kickasstorrents
-
-C<-e> extratorrents
 
 C<-x> 1337x
 
@@ -278,13 +272,8 @@ C<trrr keyword1 keyword2 keywordN -A>
 
 On Windows running 'Git/Bash for Windows' you have to specify key upfront so first make search without any option to see the results, then repeat the command and add key -[A-O] as an option. 
 
-- See help
+- To see help use C<-h> option.
 
-=over 10
-
-C<trrr -h>
-
-=back
 
 =head1 AUTHOR
 

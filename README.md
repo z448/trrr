@@ -34,13 +34,9 @@ make install
 
 > `-p` piratebay
 >
-> `-r` rarbg
->
 > `-y` yts
 >
 > `-k` kickasstorrents
->
-> `-e` extratorrents
 >
 > `-x` 1337x
 >
@@ -55,9 +51,7 @@ make install
 
 On Windows running 'Git/Bash for Windows' you have to specify key upfront so first make search without any option to see the results, then repeat the command and add key -\[A-O\] as an option. 
 
-\- See help
-
-> `trrr -h`
+\- To see help use `-h` option
 
 # AUTHOR
 

@@ -1,8 +1,8 @@
-package App::Trrr::LME;
+package App::trrr::LME;
 
 =head1 NAME
 
-App::Trrr::LME
+App::trrr::LME
 
 =cut
 

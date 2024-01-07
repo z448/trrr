@@ -1,4 +1,4 @@
-package App::Trrr::Clipboard;
+package App::trrr::Clipboard;
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( clipboard );

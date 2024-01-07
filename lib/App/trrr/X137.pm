@@ -1,8 +1,8 @@
-package App::Trrr::X137;
+package App::trrr::X137;
 
 =head1 NAME
 
-App::Trrr::X137
+App::trrr::X137
 
 =cut
 

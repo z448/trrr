@@ -1,0 +1,63 @@
+NAME
+
+    trrr - search torrents
+
+VERSION
+
+    This document describes trrr version 0.21
+
+DESCRIPTION
+
+    Tool for searching torrents. Results are sorted by number of seeders
+    and each is mapped to keyboard key. Pressing the key will open magnet
+    link in your default torrent client. On iOS magnet link is placed into
+    clipboard instead.
+
+USAGE
+
+    - Search with as many keywords as needed.
+
+      trrr keyword1 keyword2 keywordN
+
+    - trrr uses source option from '~/.trrr' conf. To use different torrent
+    source add one of the following options.
+
+      -p piratebay
+
+      -y yts
+
+      -k kickasstorrents
+
+      -x 1337x
+
+      -l limetorrents
+
+    - start it without any parameter and it'll use clipboard content as
+    keywords. ( this needs 'xclip' or 'xsel' to be installed on Linux )
+
+      trrr
+
+    - To automaticaly open some magnet link from results add its key -[A-O]
+    as an option. E.g: to open first (A) magnet link use following command.
+
+      trrr keyword1 keyword2 keywordN -A
+
+    On Windows running 'Git/Bash for Windows' you have to specify key
+    upfront so first make search without any option to see the results,
+    then repeat the command and add key -[A-O] as an option.
+
+    - To see help use -h option.
+
+AUTHOR
+
+    Zdenek Bohunek. <zdenek@cpan.org>
+
+    App::Trr::HotKey is taken from StackOverflow post by brian d foy
+
+COPYRIGHT AND LICENSE
+
+    Copyright 2016 by Zdenek Bohunek
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

@@ -1,8 +1,8 @@
-package App::Trrr::RBG;
+package App::trrr::RBG;
 
 =head1 NAME
 
-App::Trrr::RBG
+App::trrr::RBG
 
 =cut
 
@@ -34,7 +34,7 @@ sub rbg {
         return magnet($response);
     }
 
-    my $debug = 1;
+    my $debug = 0;
     my $site_string = '<table width="100%"';
     my @domain      = (
         'www.rarbgproxy.to',

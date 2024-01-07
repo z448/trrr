@@ -1,8 +1,8 @@
-package App::Trrr::EXT;
+package App::trrr::EXT;
 
 =head1 NAME
 
-App::Trrr::EXT
+App::trrr::EXT
 
 =cut
 

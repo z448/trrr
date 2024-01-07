@@ -1,8 +1,8 @@
-package App::Trrr::KAT;
+package App::trrr::KAT;
 
 =head1 NAME
 
-App::Trrr::KAT
+App::trrr::KAT
 
 =cut
 

@@ -1,8 +1,8 @@
-package App::Trrr::TPB;
+package App::trrr::TPB;
 
 =head1 NAME
 
-App::Trrr::TPB - TPB API
+App::trrr::TPB - TPB API
 
 =cut
 
