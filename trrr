@@ -15,7 +15,7 @@ use App::trrr::LME qw< lme >;
 use App::trrr::Clipboard qw< clipboard >;
 binmode(STDOUT, ":encoding(UTF-8)"); # https://stackoverflow.com/a/47940728
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 
 my @keyword = ();
