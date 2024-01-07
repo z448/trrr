@@ -8,7 +8,7 @@ App::trrr::RBG
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( rbg );
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use strict;
 use warnings;
@@ -37,9 +37,9 @@ sub rbg {
     my $debug = 0;
     my $site_string = '<table width="100%"';
     my @domain      = (
+        'rargb.to',
         'www.rarbgproxy.to',
         'rarbgget.org', # connection timeout
-        # 'rargb.to', # registration url instead of magnet link
         # 'www2.rarbggo.to', # blank .http site
         # 'rarbg.unblockninja.com' # verify you are human site
     );
@@ -50,7 +50,8 @@ sub rbg {
           . $domain
           . '/search/?search='
           . $keywords
-          . '&order=seeders&by=DESC';
+          . '&order=data&by=DESC';
+          #. '&order=seeders&by=DESC';
 
         my $response = '';
         my $ph;
@@ -81,15 +82,18 @@ sub results {
     my ( @item, %t ) = ();
     open( my $fh, '<', \$content ) || die "Can't open \$content: $!";
     while (<$fh>) {
-        $in_table = 1 if /table.+tablelist2/;
+        $in_table = 1 if /table.+lista2t/;
+        #$in_table = 1 if /table.+tablelist2/;
         $in_table = 0 if /<\/table>/;
 
-        if ( / href="(.+)?" title="(.+) torrent"/ and $in_table == 1 ) {
+        if ( / href="(.+)?" title="(.+)"/ and $in_table == 1 ) {
+            #if ( / href="(.+)?" title="(.+) torrent"/ and $in_table == 1 ) {
             $t{api}    = 'rbg';
             $t{source}    = 'rarbg';
             $t{domain} = $domain;
             $t{link}   = $1;
             $t{link}   = 'https://' . $domain . $t{link};
+            print "$t{link}\n";
             $t{title}  = $2;
         }
 
