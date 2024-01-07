@@ -33,6 +33,8 @@ make install
 \- trrr uses source option from '~/.trrr' conf. To use different torrent source add one of the following options. 
 
 > `-p` piratebay
+
+> `-r` rarbg 
 >
 > `-y` yts
 >

@@ -200,6 +200,7 @@ E.g:
        "trrr keyword1 keyword2 -k" search for keywords on kickasstorrents 
 Options: 
        "-p" piratebay
+       "-r" rarbg
        "-y" yts
        "-k" kickasstorrents
        "-x" 1337x
@@ -217,7 +218,7 @@ show();
 
 =head1 NAME
 
-trrr - search torrents 
+App::trrr - search torrents 
 
 =head1 VERSION
 
@@ -242,6 +243,8 @@ C<trrr keyword1 keyword2 keywordN>
 =over 10
 
 C<-p> piratebay
+
+C<-r> rarbg
 
 C<-y> yts
 
