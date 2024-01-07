@@ -4,7 +4,7 @@ trrr - search torrents
 
 # VERSION
 
-This document describes trrr version 0.21
+This document describes trrr version 0.22
 
 # DESCRIPTION
 
