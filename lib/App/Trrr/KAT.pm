@@ -8,7 +8,7 @@ App::Trrr::KAT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( kat );
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use strict;
 use warnings;
@@ -56,7 +56,7 @@ sub kat {
                 'https://'
               . $domain
               . '/usearch/'
-              . join( '%20', @$keywords )
+              . $keywords
               . '/?sortby=seeders&sort=desc';
         }
         else {
@@ -64,7 +64,7 @@ sub kat {
                 'https://'
               . $domain
               . '/usearch/'
-              . join( '%20', @$keywords )
+              . $keywords
               . '/?field=seeders&sorder=desc';
         }
 

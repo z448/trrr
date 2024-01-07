@@ -8,7 +8,7 @@ App::Trrr::EXT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( ext );
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
@@ -29,7 +29,7 @@ sub ext {
               . $domain
               . '/search/'
               . '?search='
-              . join( '%20', @$keywords )
+              . $keywords
               . '&s_cat=&pp=&srt=seeds&order=desc';
         }
         elsif ( $domain =~ /^extratorrent\.st$/ ) {
@@ -38,7 +38,7 @@ sub ext {
               . $domain
               . '/search/'
               . '?srt=seeds&order=desc&search='
-              . join( '%20', @$keywords )
+              . $keywords
               . '&new=1&x=0&y=0';
         }
 

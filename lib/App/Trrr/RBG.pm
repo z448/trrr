@@ -8,7 +8,7 @@ App::Trrr::RBG
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( rbg );
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use strict;
 use warnings;
@@ -49,7 +49,7 @@ sub rbg {
             'https://'
           . $domain
           . '/search/?search='
-          . join( '%20', @$keywords )
+          . $keywords
           . '&order=seeders&by=DESC';
 
         my $response = '';

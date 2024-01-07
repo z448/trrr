@@ -8,7 +8,7 @@ App::Trrr::LME
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( lme );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
 use warnings;
@@ -50,7 +50,7 @@ sub lme {
             'https://'
           . $domain
           . '/search/all/'
-          . join( '-', @$keywords )
+          . $keywords
           . '/seeds/1/';
 
         my $response = '';

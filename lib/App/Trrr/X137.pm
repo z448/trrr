@@ -8,7 +8,7 @@ App::Trrr::X137
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( x137 );
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
@@ -252,7 +252,7 @@ sub x137 {
                 'https://'
               . $domain
               . '/sort-search/'
-              . join( '%20', @$keywords )
+              . $keywords
               . '/seeders/desc/1/';
         }
         else {
@@ -261,7 +261,7 @@ sub x137 {
               . $domain
               . "/$time/"
               . 'srch?search='
-              . join( '%20', @$keywords );
+              . $keywords;
         }
 
         my $response = '';

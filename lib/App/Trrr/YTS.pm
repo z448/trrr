@@ -8,7 +8,7 @@ App::Trrr::YTS
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( yts );
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;
@@ -44,7 +44,7 @@ sub yts {
             'https://'
           . $domain
           . '/ajax/search?query='
-          . join( '%20', @$keywords );
+          . $keywords;
 
         my $response = '';
         my $ph;

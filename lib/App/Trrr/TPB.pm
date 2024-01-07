@@ -8,14 +8,12 @@ App::Trrr::TPB - TPB API
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( tpb );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
 use warnings;
 use JSON::PP;
 use List::Util qw(first);
-use URL::Encode qw< url_encode_utf8 >;
-
 
 
 sub size {
@@ -209,18 +207,11 @@ sub tpb {
     my $url;
     for my $domain (@domain) {
         if ( $domain =~ /^apibay\.org$/ ) {
-            
-            for(@$keywords){ s/%20/\ /g };
-            my @encoded_keywords = ();
-            for(@$keywords){
-                push @encoded_keywords, url_encode_utf8($_);
-            }
-            
             $url =
                 'https://'
               . $domain
               . '/q.php?q='
-              . join( '%20', @encoded_keywords )
+              . $keywords
               . '&cat=0';
         }
         else {
@@ -228,7 +219,7 @@ sub tpb {
                 'https://'
               . $domain
               . '/search/'
-              . join( '%20', @$keywords )
+              . $keywords
               . '/1/99/0';
         }
 
