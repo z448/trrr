@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+use URL::Encode qw< url_encode_utf8>;
 use Term::ANSIColor;
 use App::Trrr::KAT qw< kat >;
 use App::Trrr::TPB qw< tpb >;
@@ -14,7 +15,7 @@ use App::Trrr::LME qw< lme >;
 use App::Trrr::Clipboard qw< clipboard >;
 binmode(STDOUT, ":encoding(UTF-8)"); # https://stackoverflow.com/a/47940728
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 
 my @keyword = ();
@@ -72,7 +73,6 @@ for(@ARGV){
         print "unknown option $_\n" and exit;
     } else { push @keyword, $_ }
 }
-for(@keyword){ s/\ /%20/g }
 
 
 my $term_width = 0; 
@@ -124,7 +124,8 @@ sub open_magnet{
 sub show {
     no strict "refs";
 
-    my @result = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $opt->{api}(\@keyword) };
+    my $keywords = url_encode_utf8( join(' ', @keyword) );
+    my @result = grep { int($_->{seeds}) >= int($opt->{seeds}) } @{ $opt->{api}($keywords) };
     @result = sort { $b->{seeds} <=> $a->{seeds} } @result;
     @result = splice(@result,0,15);
 
@@ -168,10 +169,7 @@ sub wait_key {
             print "To pick from results repeat search and add -[key] (e.g. -a)\n" and exit;
         }
 
-        # print colored(['blink'],'^'); # blinker
-        print ' ';
-        
-        print ' ' . colored(['grey5 on_white'],'P') . colored(['white on_grey3'],'RESS') . colored(['grey5 on_white'],'K') . colored(['white on_grey3'],'EY') . colored(['white on_white'],'') . "\n";
+        print '  ' . colored(['grey5 on_white'],'P') . colored(['white on_grey3'],'RESS') . colored(['grey5 on_white'],'K') . colored(['white on_grey3'],'EY') . colored(['white on_white'],'') . "\n";
 
         require App::Trrr::HotKey;
         App::Trrr::HotKey->import( 'readkey' ) ;
