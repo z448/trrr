@@ -2,9 +2,13 @@
 
 trrr - search torrents 
 
+# VERSION
+
+This document describes trrr version 0.21
+
 # DESCRIPTION
 
-CLI tool to search torrents. Results are sorted by number of seeders and each is mapped to key. Pressing the key with assigned letter will open magnet link in your default client. On iOS, magnet link is placed into clipboard.
+Tool for searching torrents. Results are sorted by number of seeders and each is mapped to keyboard key. Pressing the key will open magnet link in your default torrent client. On iOS magnet link is placed into clipboard instead.
 
 # INSTALLATION
 
@@ -22,17 +26,36 @@ make install
 
 # USAGE
 
-Search with as many parameters as needed.
+\- Search with as many keywords as needed.
 
 > `trrr keyword1 keyword2 keywordN`
 
-Start it without any parameter and it'll use clipboard content as keywords. ( needs 'xclip' or 'xsel' to be installed on Linux )
+\- trrr uses source option from '~/.trrr' conf. To use different torrent source add one of the following options. 
 
-To get another torrent from previous search add key as parameter. This is mandatory on Windows running 'Git/Bash for Windows' where you have to specify key on CLI upfront.
+> `-p` piratebay
+>
+> `-r` rarbg
+>
+> `-y` yts
+>
+> `-k` kickasstorrents
+>
+> `-e` extratorrents
+>
+> `-x` 1337x
+>
+> `-l` limetorrents
 
-> `trrr keyword1 keyword2 keywordN -b`
+\- start it without any parameter and it'll use clipboard content as keywords. ( this needs 'xclip' or 'xsel' to be installed on Linux )
 
-See this perdoc.
+\- To automaticaly open some magnet link from results add its key -\[A-O\] as an option. 
+  E.g: to open first (A) magnet link use following command.
+
+> `trrr keyword1 keyword2 keywordN -A`
+
+On Windows running 'Git/Bash for Windows' you have to specify key upfront so first make search without any option to see the results, then repeat the command and add key -\[A-O\] as an option. 
+
+\- See help
 
 > `trrr -h`
 
