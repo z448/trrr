@@ -116,7 +116,21 @@ sub open_magnet{
         }
     } elsif( $os =~ /(linux|darwin)/ ){
         print "Can't open magnet link, 'open' tool not installed.\n" and exit unless dep('open');
+        
+        no warnings;
+        open SAVEERR, ">& STDERR";
+        open SAVEOUT, ">& STDOUT";
+        open STDOUT, ">", undef;;
+        open STDERR, ">& STDOUT";
+        select STDERR; $| = 1;
+        select STDOUT; $| = 1;
+
         system(qq(open "$magnet"));  
+
+        close STDOUT;
+        close STDERR;
+        open STDOUT, ">&SAVEOUT";
+        open STDERR, ">&SAVEERR";
     }
 }
 
