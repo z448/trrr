@@ -41,7 +41,7 @@ if( -f "$ENV{HOME}/.trrr" ){
         next unless /:/;
         my( $field, $value ) = split /:\s*/, $_;
         $field =~ s/source/api/;
-        chop $value; 
+        $value =~ s/ +//;
         if($field eq 'api'){
             print "unrecognized source '$value'\n" and exit unless $value =~ /^(tpb|rbg|yts|kat|ext|x137|lme)$/;
         }
