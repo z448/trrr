@@ -41,6 +41,7 @@ if( -f "$ENV{HOME}/.trrr" ){
         next unless /:/;
         my( $field, $value ) = split /:\s*/, $_;
         $field =~ s/source/api/;
+        chop $value; 
         if($field eq 'api'){
             print "unrecognized source '$value'\n" and exit unless $value =~ /^(tpb|rbg|yts|kat|ext|x137|lme)$/;
         }
@@ -51,7 +52,7 @@ if( -f "$ENV{HOME}/.trrr" ){
 else {
     open my $conf, '>', "$ENV{HOME}/.trrr";
     print $conf "# minimum number of seeds the results should contain\nseeds: $opt->{seeds}\n\n"; 
-    print $conf "# source which should be used when no option is passed to trrr: recognized options are: tpb(piratebay), rbg(rarbg), yts, kat(kickasstorrents), ext(extratorrents, x137(1337x), lme(limetorrents)\nsource: $opt->{api}\n\n"; 
+    print $conf "# source which should be used when no option is passed to trrr: recognized options are: tpb(piratebay), rbg(rarbg), yts, kat(kickasstorrents), x137(1337x), lme(limetorrents)\nsource: $opt->{api}\n\n"; 
     close $conf;
 }
 
@@ -207,25 +208,39 @@ sub get_torrent {
 
 
 sub help {
-    my $help = <<'END_HELP';
+    my $thing = 'piratebay';
+
+    my $default_source = 'tpb';
+
+    open(my $fh, '<', "$ENV{HOME}/.trrr") || die "Can't open $ENV{HOME}/.trrr: $!";
+    while(<$fh>){
+        if(/^source: ([a-z0-9]+)/){ $default_source = $1 }
+    }
+    close($fh);
+
+
+    my $help = <<"END_HELP";
+
 trrr - search torrents
 
 E.g:
-       "trrr keyword1 keyword2" search for keywords on piratebay
-       "trrr keyword1 keyword2 -k" search for keywords on kickasstorrents 
+       "trrr some thing" search for something on piratebay
+       "trrr some thing -k" search for something on kickasstorrents 
 Options: 
-       "-p" piratebay
-       "-r" rarbg
-       "-y" yts
-       "-k" kickasstorrents
-       "-x" 1337x
-       "-l" limetorrents
-       
-       "-A" open first (A) magnet link from results without waiting for key press
-       "perldoc trrr" read more
 END_HELP
-
     print "$help\n";
+
+    if( $default_source eq 'tpb' ){ print "\t\"-p\" piratebay [default]\n" } else { print "\t\"-p\" piratebay\n" }
+    if( $default_source eq 'rbg' ){ print "\t\"-r\" rarbg [default]\n" } else { print "\t\"-r\" rarbg\n" }
+    if( $default_source eq 'yts' ){ print "\t\"-y\" yts [default]\n" } else { print "\t\"-y\" yts\n" }
+    if( $default_source eq 'kat' ){ print "\t\"-k\" kickasstorrents [default]\n" } else { print "\t\"-k\" kickasstorrents\n" }
+    if( $default_source eq 'x137' ){ print "\t\"-x\" 1337x [default]\n" } else { print "\t\"-x\" 1337x\n" }
+    if( $thing eq 'lme' ){ print "\t\"-l\" limetorrents [default]\n" } else { print "\t\"-l\" limetorrents\n" }
+
+    print "\n";
+    print "\t\"-A\" open first (A) magnet link from results without waiting for key press\n";
+    print "\t\"perldoc trrr\" read more\n";
+    print "\n";
 }
 
 
