@@ -8,10 +8,11 @@ App::trrr::EXT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( ext );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
 use warnings;
+use App::trrr qw< get_content >;
 
 sub ext {
     my $keywords = shift;
@@ -42,24 +43,16 @@ sub ext {
               . '&new=1&x=0&y=0';
         }
 
-        my $response = '';
+        my $content = '';
         my $ph;
-        if($cacert){
-            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
-        } else {
-            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
-        }   
-        while (<$ph>) {
-            $response = $response . $_;
-        }
-        close $ph;
+        $content = get_content($url);
 
-        unless ( $response =~ /$site_string/ ) {
+        unless ( $content =~ /$site_string/ ) {
             print "$domain has no \$site_string\n" if $debug; 
             print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
-        return results( $response, $domain );
+        return results( $content, $domain );
     }
 }
 

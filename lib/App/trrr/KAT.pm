@@ -8,11 +8,12 @@ App::trrr::KAT
 
 @ISA       = qw(Exporter);
 @EXPORT_OK = qw( kat );
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use strict;
 use warnings;
 use URL::Encode q(url_decode_utf8);
+use App::trrr qw< get_content >;
 
 sub kat {
     my $keywords = shift;
@@ -20,19 +21,11 @@ sub kat {
     my $ua = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
 
     if ( $keywords =~ /\.html$/ ) {
-        my $response = '';
+        my $content = '';
         my $ph;
-        if($cacert){
-            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
-        } else {
-            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$keywords" ) || die "Cant't open 'curl $keywords' pipe: $!";
-        }   
-        while (<$ph>) {
-            $response = $response . $_;
-        }
-        close $ph;
 
-        return magnet($response);
+        $content = get_content($keywords);
+        return magnet($content);
     }
 
     my $debug = 0;
@@ -68,24 +61,17 @@ sub kat {
               . '/?field=seeders&sorder=desc';
         }
 
-        my $response = '';
+        my $content = '';
         my $ph;
-        if($cacert){
-            open( $ph, '-|', 'curl', "--cacert", "$cacert", "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
-        } else {
-            open( $ph, '-|', 'curl', "--user-agent", "$ua", '-s', "$url" ) || die "Cant't open 'curl $url' pipe: $!";
-        }   
-        while (<$ph>) {
-            $response = $response . $_;
-        }
-        close $ph;
 
-        unless ( $response =~ /$site_string/ ) {
+        $content = get_content($url);
+
+        unless ( $content =~ /$site_string/ ) {
             print "$domain has no \$site_string\n" if $debug; 
             print "Could not find \$site_string or could not connect to any of following domains:\n" . join( "\n", @domain ) . "\n" if $domain eq $domain[$#domain] and $debug;
             next;
         }
-        return results( $response, $domain );
+        return results( $content, $domain );
 
     }
 }
