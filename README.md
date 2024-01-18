@@ -14,14 +14,13 @@ Tool for searching torrents. Results are sorted by number of seeders and each is
 
 ```bash
 # install dependencies
-cpan URL::Encode
-apt-get install curl
+sudo cpan URL::Encode
 # clone, build and install
 git clone https://github.com/z448/trrr
 cd trrr
 perl Makefile.PL
 make
-make install
+sudo make install
 ```
 
 # USAGE
