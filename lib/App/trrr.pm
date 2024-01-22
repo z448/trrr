@@ -61,9 +61,10 @@ sub get_content {
         close $ph;
     } else {
         eval {
-            require HTTP::Tiny;
-            HTTP::Tiny->import();
-            1;
+            #require HTTP::Tiny;
+            #HTTP::Tiny->import();
+            #1;
+            use HTTP::Tiny;
         };
         my $response = '';
         if($cacert){

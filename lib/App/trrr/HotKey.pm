@@ -6,45 +6,43 @@
 
 @ISA = qw(Exporter);
 @EXPORT = qw(cbreak cooked readkey);
-use strict;
+use POSIX qw< :termios_h >;
 
-my $load = eval {
-    require POSIX;
-    POSIX->import(':termios_h');
-    1;
-};
-unless($load){ return 1 } else {
-    no strict;
-    my ($term, $oterm, $echo, $noecho, $fd_stdin);
+no strict;
 
-    $fd_stdin = fileno(STDIN);
-    $term     = POSIX::Termios->new();
-    $term->getattr($fd_stdin);
-    $oterm     = $term->getlflag();
 
-    $echo     = ECHO | ECHOK | ICANON;
-    $noecho   = $oterm & ~$echo;
 
-    sub cbreak {
-        $term->setlflag($noecho);
-        $term->setcc(VTIME, 1);
-        $term->setattr($fd_stdin, TCSANOW);
-    }
+my ($term, $oterm, $echo, $noecho, $fd_stdin);
 
-    sub cooked {
-        $term->setlflag($oterm);
-        $term->setcc(VTIME, 0);
-        $term->setattr($fd_stdin, TCSANOW);
-    }
+$fd_stdin = fileno(STDIN);
+$term     = POSIX::Termios->new();
+$term->getattr($fd_stdin);
+$oterm     = $term->getlflag();
 
-    sub readkey {
-        my $key = '';
-        cbreak();
-        sysread(STDIN, $key, 1);
-        cooked();
-        return $key;
-    }
+$echo     = ECHO | ECHOK | ICANON;
+$noecho   = $oterm & ~$echo;
 
-    END { cooked() }
+sub cbreak {
+     $term->setlflag($noecho);
+     $term->setcc(VTIME, 1);
+     $term->setattr($fd_stdin, TCSANOW);
 }
+
+sub cooked {
+     $term->setlflag($oterm);
+     $term->setcc(VTIME, 0);
+     $term->setattr($fd_stdin, TCSANOW);
+}
+
+sub readkey {
+     my $key = '';
+     cbreak();
+     sysread(STDIN, $key, 1);
+     cooked();
+     return $key;
+}
+
+END { cooked() }
+
+
 1;

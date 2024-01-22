@@ -187,8 +187,9 @@ sub wait_key {
         # print colored(['white on_grey3'],'P') . colored(['grey5 on_white'],'RESS') . colored(['white on_grey3'],'K') . colored(['grey5 on_white'],'EY') . "\n";
         print '  ' . colored(['grey5 on_white'],'P') . colored(['white on_grey3'],'RESS') . colored(['grey5 on_white'],'K') . colored(['white on_grey3'],'EY') . "\n";
 
-        require App::trrr::HotKey;
-        App::trrr::HotKey->import( 'readkey' ) ;
+        #require App::trrr::HotKey;
+        #App::trrr::HotKey->import( 'readkey' ) ;
+        use App::trrr::HotKey qw< readkey >;
         $opt->{key} = uc readkey();
         get_torrent($result);
     }
@@ -252,7 +253,7 @@ App::trrr - search torrents
 
 =head1 VERSION
 
-This document describes trrr version 0.21
+This document describes trrr version 0.23
 
 =head1 DESCRIPTION
     
