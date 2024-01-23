@@ -77,7 +77,6 @@ sub results {
             $t{domain} = $domain;
             $t{link}   = $1;
             $t{link}   = 'https://' . $domain . $t{link};
-            print "$t{link}\n";
             $t{title}  = $2;
         }
 
