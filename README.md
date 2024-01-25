@@ -18,7 +18,7 @@ On Debian/Ubuntu linux download .deb [release](https://github.com/z448/trrr/rele
 sudo dpkg -i trrr_Linux.deb
 ```
 
-On different linux clone, build and install.
+On different linux or macOS, clone build and install.
 
 ```bash
 sudo cpan URL::Encode
