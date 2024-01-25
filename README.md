@@ -12,10 +12,16 @@ Tool for searching torrents. Results are sorted by number of seeders and each is
 
 # INSTALLATION
 
+On Debian/Ubuntu linux download .deb [release](https://github.com/z448/trrr/releases) and install.
+
 ```bash
-# install dependencies
+sudo dpkg -i trrr_Linux.deb
+```
+
+On different linux clone, build and install.
+
+```bash
 sudo cpan URL::Encode
-# clone, build and install
 git clone https://github.com/z448/trrr
 cd trrr
 perl Makefile.PL
