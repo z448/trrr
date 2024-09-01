@@ -8,7 +8,7 @@ This document describes trrr version 0.23
 
 # GIF
 
-![trrr](https://raw.githubusercontent.com/z448/trrr/master/trrr.gif)
+![trrr](https://raw.githubusercontent.com/z448/trrr/master/trrr.mp4)
 
 # DESCRIPTION
 
