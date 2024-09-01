@@ -6,6 +6,10 @@ trrr - search torrents
 
 This document describes trrr version 0.23
 
+# GIF
+
+![trrr](https://raw.githubusercontent.com/z448/trrr/master/trrr.gif)
+
 # DESCRIPTION
 
 Tool for searching torrents. Results are sorted by number of seeders and each is mapped to keyboard key. Pressing the key will open magnet link in your default torrent client. On iOS magnet link is placed into clipboard instead.
