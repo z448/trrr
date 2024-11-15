@@ -5,7 +5,7 @@ pipeline {
             steps {
                 sh 'perl Makefile.PL'
                 sh 'make'
-                sh 'make install'
+                sh 'sudo make install'
             }
         }
     }
