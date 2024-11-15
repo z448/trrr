@@ -25,7 +25,7 @@ sudo dpkg -i trrr_Linux.deb
 On different linux or macOS, clone build and install.
 
 ```bash
-sudo cpan URL::Encode
+sudo cpan URL::Encode JSON::PP
 git clone https://github.com/z448/trrr
 cd trrr
 perl Makefile.PL
